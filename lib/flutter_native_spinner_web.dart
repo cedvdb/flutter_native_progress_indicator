@@ -78,15 +78,17 @@ class _CircularProgressIndicatorBuilder {
         div as web.HTMLDivElement;
         div.style.width = '100%';
         div.style.height = '100%';
-        div.className = 'host progress indeterminate';
+        div.className = 'circular-progress-indicator';
         div.innerHTML = '''
           ${generateCss(strokeWidth: strokeWidth, color: color, trackColor: trackColor)}
-          <div class="spinner">
-            <div class="left">
-              <div class="circle"></div>
-            </div>
-            <div class="right">
-              <div class="circle"></div>
+          <div class="progress indeterminate">
+            <div class="spinner">
+              <div class="left">
+                <div class="circle"></div>
+              </div>
+              <div class="right">
+                <div class="circle"></div>
+              </div>
             </div>
           </div>
           ''';
@@ -112,16 +114,18 @@ class _CircularProgressIndicatorBuilder {
         div as web.HTMLDivElement;
         div.style.width = '100%';
         div.style.height = '100%';
-        div.className = 'host progress';
+        div.className = 'circular-progress-indicator';
         div.innerHTML = '''
           ${generateCss(strokeWidth: strokeWidth, color: color, trackColor: trackColor)}
-          <svg viewBox="0 0 4800 4800">
-            <circle class="track" pathLength="100"></circle>
-            <circle
-              class="active-track"
-              pathLength="100"
-              stroke-dashoffset=$dashOffset></circle>
-          </svg>
+          <div class="progress">
+            <svg viewBox="0 0 4800 4800">
+              <circle class="track" pathLength="100"></circle>
+              <circle
+                class="active-track"
+                pathLength="100"
+                stroke-dashoffset=$dashOffset></circle>
+            </svg>
+          </div>
           ''';
       },
     );
@@ -151,7 +155,7 @@ class _CircularProgressIndicatorBuilder {
     return '''
 <style>
 
-.host {
+.circular-progress-indicator {
   display: inline-flex;
   vertical-align: middle;
   width: 100%;
@@ -164,28 +168,28 @@ class _CircularProgressIndicatorBuilder {
 }
 
 
-.progress {
+.circular-progress-indicator .progress {
   flex: 1;
   align-self: stretch;
 }
 
-.progress,
-.spinner,
-.left,
-.right,
-.circle,
-svg,
-.track,
-.active-track{
+.circular-progress-indicator .progress,
+.circular-progress-indicator .spinner,
+.circular-progress-indicator .left,
+.circular-progress-indicator .right,
+.circular-progress-indicator .circle,
+.circular-progress-indicator svg,
+.circular-progress-indicator .track,
+.circular-progress-indicator .active-track{
   position: absolute;
   inset: 0;
 }
 
-svg {
+.circular-progress-indicator svg {
   transform: rotate(-90deg);
 }
 
-circle {
+.circular-progress-indicator circle {
   cx: 50%;
   cy: 50%;
   r: calc(50% * (1 - $strokeWidth / 100));
@@ -194,37 +198,37 @@ circle {
   fill: transparent;
 }
 
-.active-track {
+.circular-progress-indicator .active-track {
   transition: stroke-dashoffset 500ms cubic-bezier(0, 0, 0.2, 1);
   stroke: $rgbColor;
 }
 
-.track {
+.circular-progress-indicator .track {
   stroke: $rgbTrackColor;
 }
 
-.progress.indeterminate {
+.circular-progress-indicator .progress.indeterminate {
   animation: linear infinite linear-rotate;
   animation-duration: ${linearRotateDuration.inMilliseconds}ms;
 }
 
-.spinner {
+.circular-progress-indicator .spinner {
   animation: infinite both rotate-arc;
   animation-duration: ${cycleDuration.inMilliseconds}ms;
   animation-timing-function: $indeterminateEasing;
 }
 
-.left {
+.circular-progress-indicator .left {
   overflow: hidden;
   inset: 0 50% 0 0;
 }
 
-.right {
+.circular-progress-indicator .right {
   overflow: hidden;
   inset: 0 0 0 50%;
 }
 
-.circle {
+.circular-progress-indicator .circle {
   box-sizing: border-box;
   border-radius: 50%;
   border: solid ${strokeWidth}px;
@@ -236,26 +240,22 @@ circle {
   animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.four-color .circle {
-  animation-name: expand-arc, four-color;
-}
-
-.left .circle {
+.circular-progress-indicator .left .circle {
   rotate: 135deg;
   inset: 0 -100% 0 0;
 }
-.right .circle {
+.circular-progress-indicator .right .circle {
   rotate: 100deg;
   inset: 0 0 0 -100%;
   animation-delay: calc(-0.5 * ${arcDuration.inMilliseconds}ms), 0ms;
 }
 
 @media (forced-colors: active) {
-  .active-track {
+  .circular-progress-indicator .active-track {
     stroke: CanvasText;
   }
 
-  .circle {
+  .circular-progress-indicator .circle {
     border-color: CanvasText CanvasText Canvas Canvas;
   }
 }
@@ -324,7 +324,7 @@ class _LinearProgressIndicatorBuilder {
         div as web.HTMLDivElement;
         div.style.width = '100%';
         div.style.height = '100%';
-        div.className = 'host progress';
+        div.className = 'linear-progress-indicator';
         div.innerHTML = '''
       ${generateCss(
           color: color,
@@ -332,13 +332,15 @@ class _LinearProgressIndicatorBuilder {
           borderRadius: borderRadius,
           height: height,
         )}
-      <div class="dots" ?hidden="true"></div>
-      <div class="inactive-track" style="transform: scaleX: 100%"></div>
-      <div class="bar primary-bar" style="transform: scaleX: 1%">
-        <div class="bar-inner"></div>
-      </div>
-      <div class="bar secondary-bar">
-        <div class="bar-inner"></div>
+      <div class="progress indeterminate">
+        <div class="dots" ?hidden="true"></div>
+        <div class="inactive-track" style="transform: scaleX: 100%"></div>
+        <div class="bar primary-bar" style="transform: scaleX: 1%">
+          <div class="bar-inner"></div>
+        </div>
+        <div class="bar secondary-bar">
+          <div class="bar-inner"></div>
+        </div>
       </div>
           ''';
       },
@@ -373,7 +375,7 @@ class _LinearProgressIndicatorBuilder {
     final rgbTrackColor =
         'rgb(${trackColor.r * 255}, ${trackColor.g * 255}, ${trackColor.b * 255})';
     final determinateDuration = Duration(milliseconds: 250);
-    final indeterminateDuration = Duration(milliseconds: 2);
+    final indeterminateDuration = Duration(seconds: 2);
     final determinateEasing = 'cubic-bezier(0.4, 0, 0.6, 1)';
     final svg =
         "data:image/svg+xml,%3Csvg version='1.1' xmlns='http://www.w3.org/2000/svg' viewBox='0 0 5 2' preserveAspectRatio='xMinYMin slice'%3E%3Ccircle cx='1' cy='1' r='1'/%3E%3C/svg%3E";
@@ -383,7 +385,7 @@ class _LinearProgressIndicatorBuilder {
 
     return '''
 <style>
-.host {
+.linear-progress-indicator {
   border-radius: ${borderRadius.topLeft}px ${borderRadius.topRight}px ${borderRadius.bottomRight}px ${borderRadius.bottomLeft}px;
   display: flex;
   position: relative;
@@ -394,15 +396,15 @@ class _LinearProgressIndicatorBuilder {
   contain: strict;
 }
 
-.progress,
-.dots,
-.inactive-track,
-.bar,
-.bar-inner {
+.linear-progress-indicator .progress,
+.linear-progress-indicator .dots,
+.linear-progress-indicator .inactive-track,
+.linear-progress-indicator .bar,
+.linear-progress-indicator .bar-inner {
   position: absolute;
 }
 
-.progress {
+.linear-progress-indicator .progress {
   /* Animations need to be in LTR. We support RTL by flipping the indicator with scale(-1). */
   direction: ltr;
   inset: 0;
@@ -412,7 +414,7 @@ class _LinearProgressIndicatorBuilder {
   align-items: center;
 }
 
-.bar {
+.linear-progress-indicator .bar {
   animation: none;
   /* position is offset for indeterminate animation, so we lock the inline size here. */
   width: 100%;
@@ -421,24 +423,24 @@ class _LinearProgressIndicatorBuilder {
   transition: transform ${determinateDuration.inMilliseconds}ms $determinateEasing;
 }
 
-.secondary-bar {
+.linear-progress-indicator .secondary-bar {
   display: none;
 }
 
-.bar-inner {
+.linear-progress-indicator .bar-inner {
   inset: 0;
   animation: none;
   background: $rgbColor;
 }
 
-.inactive-track {
+.linear-progress-indicator .inactive-track {
   background: $rgbTrackColor;
   inset: 0;
   transition: transform ${determinateDuration.inMilliseconds}ms $determinateEasing;
   transform-origin: left center;
 }
 
-.dots {
+.linear-progress-indicator .dots {
   inset: 0;
   animation: linear infinite ${determinateDuration.inMilliseconds}ms;
   animation-name: buffering;
@@ -458,62 +460,50 @@ class _LinearProgressIndicatorBuilder {
 
 /* dots are hidden when indeterminate or when there is no visible buffer to
   prevent infinite invisible animation. */
-.dots[hidden] {
+.linear-progress-indicator .dots[hidden] {
   display: none;
 }
 
 /* indeterminate */
-.indeterminate .bar {
+.linear-progress-indicator .indeterminate .bar {
   transition: none;
 }
 
 /* note, the numbers here come directly from the mdc implementation.
    see https://github.com/material-components/material-components-web/blob/main/packages/mdc-linear-progress/_linear-progress.scss#L208. */
-.indeterminate .primary-bar {
+.linear-progress-indicator .indeterminate .primary-bar {
   inset-inline-start: -145.167%;
 }
 
-.indeterminate .secondary-bar {
+.linear-progress-indicator .indeterminate .secondary-bar {
   inset-inline-start: -54.8889%;
   /* this is display none by default. */
   display: block;
 }
 
-.indeterminate .primary-bar {
+.linear-progress-indicator .indeterminate .primary-bar {
   animation: linear infinite ${indeterminateDuration.inMilliseconds}ms;
   animation-name: primary-indeterminate-translate;
 }
 
-.indeterminate .primary-bar > .bar-inner {
+.linear-progress-indicator .indeterminate .primary-bar > .bar-inner {
   animation: linear infinite ${indeterminateDuration.inMilliseconds}ms
     primary-indeterminate-scale;
 }
 
-.indeterminate.four-color .primary-bar > .bar-inner {
-  animation-name: primary-indeterminate-scale, four-color;
-  animation-duration:${indeterminateDuration.inMilliseconds}ms,
-    calc(${indeterminateDuration.inMilliseconds}ms * 2);
-}
-
-.indeterminate .secondary-bar {
+.linear-progress-indicator .indeterminate .secondary-bar {
   animation: linear infinite ${indeterminateDuration.inMilliseconds}ms;
   animation-name: secondary-indeterminate-translate;
 }
 
-.indeterminate .secondary-bar > .bar-inner {
+.linear-progress-indicator .indeterminate .secondary-bar > .bar-inner {
   animation: linear infinite ${indeterminateDuration.inMilliseconds}ms
     secondary-indeterminate-scale;
 }
 
-.indeterminate.four-color .secondary-bar > .bar-inner {
-  animation-name: secondary-indeterminate-scale, four-color;
-  animation-duration: ${indeterminateDuration.inMilliseconds}ms,
-    calc(${indeterminateDuration.inMilliseconds}ms * 2);
+:host(:dir(rtl)) {
+  transform: scale(-1);
 }
-
-  :host(:dir(rtl)) {
-    transform: scale(-1);
-  }
 
 @keyframes primary-indeterminate-scale {
   0% {

@@ -22,25 +22,46 @@ class _MyAppState extends State<MyApp> {
           title: const Text('Plugin example app'),
         ),
         body: Center(
-          child: Column(
+          child: Row(
             children: [
-              SizedBox(
-                height: 100,
-                child: NativeCircularProgressIndicator(),
-              ),
-              SizedBox(
-                height: 100,
-                child: NativeCircularProgressIndicator(
-                  value: 0.5,
-                  backgroundColor: Colors.amber,
+              Expanded(
+                flex: 1,
+                child: Column(
+                  children: [
+                    Text('Flutter'),
+                    CircularProgressIndicator(),
+                    CircularProgressIndicator(
+                      value: 0.5,
+                      backgroundColor: Colors.amber,
+                    )
+                  ],
                 ),
               ),
-              SizedBox(
-                height: 100,
-                child: NativeLinearProgressIndicator(
-                  backgroundColor: Colors.amber,
+              Expanded(
+                flex: 1,
+                child: Column(
+                  children: [
+                    Text('Native'),
+                    SizedBox(
+                      height: 100,
+                      child: NativeCircularProgressIndicator(),
+                    ),
+                    SizedBox(
+                      height: 100,
+                      child: NativeCircularProgressIndicator(
+                        value: 0.5,
+                        backgroundColor: Colors.amber,
+                      ),
+                    ),
+                    SizedBox(
+                      height: 100,
+                      child: NativeLinearProgressIndicator(
+                        backgroundColor: Colors.amber,
+                      ),
+                    )
+                  ],
                 ),
-              )
+              ),
             ],
           ),
         ),

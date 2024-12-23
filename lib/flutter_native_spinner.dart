@@ -92,35 +92,26 @@ class NativeLinearProgressIndicator extends StatelessWidget {
     final trackColor = backgroundColor ??
         Theme.of(context).progressIndicatorTheme.linearTrackColor ??
         Colors.transparent;
-    final spinner = LayoutBuilder(
-      builder: (context, constraints) {
-        final size = min(constraints.maxHeight, constraints.maxWidth);
-        return SizedBox(
-          height: size,
-          width: size,
-          child: value == null
-              ? FlutterNativeSpinnerPlatform.instance
-                  .buildIndeterminateLinearProgressIndicator(
-                  color: color,
-                  trackColor: trackColor,
-                  borderRadius: borderRadius?.resolve(TextDirection.ltr) ??
-                      BorderRadius.zero,
-                  height: height,
-                )
-              : FlutterNativeSpinnerPlatform.instance
-                  .buildIndeterminateLinearProgressIndicator(
-                  color: color,
-                  trackColor: trackColor,
-                  borderRadius: borderRadius?.resolve(TextDirection.ltr) ??
-                      BorderRadius.zero,
-                  height: height,
-                ),
-        );
-      },
-    );
+    final indicator = value == null
+        ? FlutterNativeSpinnerPlatform.instance
+            .buildIndeterminateLinearProgressIndicator(
+            color: color,
+            trackColor: trackColor,
+            borderRadius:
+                borderRadius?.resolve(TextDirection.ltr) ?? BorderRadius.zero,
+            height: height,
+          )
+        : FlutterNativeSpinnerPlatform.instance
+            .buildIndeterminateLinearProgressIndicator(
+            color: color,
+            trackColor: trackColor,
+            borderRadius:
+                borderRadius?.resolve(TextDirection.ltr) ?? BorderRadius.zero,
+            height: 4,
+          );
     return _buildSemanticsWrapper(
       context: context,
-      child: spinner,
+      child: indicator,
       semanticsLabel: semanticsLabel,
       semanticsValue: semanticsValue,
       value: value,
