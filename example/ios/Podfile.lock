@@ -1,0 +1,28 @@
+PODS:
+  - Flutter (1.0.0)
+  - integration_test (0.0.1):
+    - Flutter
+  - native_progress_indicator (0.0.1):
+    - Flutter
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - integration_test (from `.symlinks/plugins/integration_test/ios`)
+  - native_progress_indicator (from `.symlinks/plugins/native_progress_indicator/ios`)
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  integration_test:
+    :path: ".symlinks/plugins/integration_test/ios"
+  native_progress_indicator:
+    :path: ".symlinks/plugins/native_progress_indicator/ios"
+
+SPEC CHECKSUMS:
+  Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
+  integration_test: 252f60fa39af5e17c3aa9899d35d908a0721b573
+  native_progress_indicator: 6489982fcb3c34a1d83df3e933c28adafc57dda8
+
+PODFILE CHECKSUM: 4f1c12611da7338d21589c0b2ecd6bd20b109694
+
+COCOAPODS: 1.15.2
