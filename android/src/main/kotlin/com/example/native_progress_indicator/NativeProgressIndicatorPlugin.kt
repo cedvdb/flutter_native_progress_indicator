@@ -1,36 +1,71 @@
 package com.example.native_progress_indicator
 
-import androidx.annotation.NonNull
 
 import io.flutter.embedding.engine.plugins.FlutterPlugin
-import io.flutter.plugin.common.MethodCall
-import io.flutter.plugin.common.MethodChannel
-import io.flutter.plugin.common.MethodChannel.MethodCallHandler
-import io.flutter.plugin.common.MethodChannel.Result
-import com.google.android.material.progressindicator.CircularProgressIndicator
+import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding
+import android.content.Context
+import io.flutter.plugin.common.StandardMessageCodec
+import io.flutter.plugin.platform.PlatformView
+import io.flutter.plugin.platform.PlatformViewFactory
+import android.view.View
+import android.widget.ProgressBar
 
 /** TestPlugin */
-class NativeProgressIndicatorPlugin: FlutterPlugin, MethodCallHandler {
-    /// The MethodChannel that will the communication between Flutter and native Android
-    ///
-    /// This local reference serves to register the plugin with the Flutter Engine and unregister it
-    /// when the Flutter Engine is detached from the Activity
-    private lateinit var channel : MethodChannel
 
-    override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-        channel = MethodChannel(flutterPluginBinding.binaryMessenger, "test_plugin")
-        channel.setMethodCallHandler(this)
+class NativeProgressIndicatorPlugin : FlutterPlugin {
+    override fun onAttachedToEngine(binding: FlutterPluginBinding) {
+        binding
+            .platformViewRegistry
+            .registerViewFactory("native_progress_indicator/indeterminate_circular_progress_indicator", CircularIndicatorNativeViewFactory())
+
+        binding
+            .platformViewRegistry
+            .registerViewFactory("native_progress_indicator/determinate_circular_progress_indicator", CircularIndicatorNativeViewFactory())
+
+        binding
+            .platformViewRegistry
+            .registerViewFactory("native_progress_indicator/indeterminate_linear_progress_indicator", LinearIndicatorNativeViewFactory())
+
+        binding
+            .platformViewRegistry
+            .registerViewFactory("native_progress_indicator/determinate_linear_progress_indicator", LinearIndicatorNativeViewFactory())
     }
 
-    override fun onMethodCall(call: MethodCall, result: Result) {
-        if (call.method == "getPlatformVersion") {
-            result.success("Android ${android.os.Build.VERSION.RELEASE}")
-        } else {
-            result.notImplemented()
-        }
-    }
+    override fun onDetachedFromEngine(binding: FlutterPluginBinding) {}
+}
 
-    override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
-        channel.setMethodCallHandler(null)
+class CircularIndicatorNativeViewFactory : PlatformViewFactory(StandardMessageCodec.INSTANCE) {
+    override fun create(context: Context, viewId: Int, args: Any?): PlatformView {
+        val creationParams = args as Map<String?, Any?>?
+        return CircularIndicatorNativeView(context, viewId, creationParams)
     }
 }
+
+class LinearIndicatorNativeViewFactory : PlatformViewFactory(StandardMessageCodec.INSTANCE) {
+    override fun create(context: Context, viewId: Int, args: Any?): PlatformView {
+        val creationParams = args as Map<String?, Any?>?
+        return LinearIndicatorNativeView(context, viewId, creationParams)
+    }
+}
+
+internal class CircularIndicatorNativeView(context: Context, id: Int, creationParams: Map<String?, Any?>?) : PlatformView {
+    private val indicator: View = nativeCircularProgressIndicator(context, creationParams ?: mapOf())
+
+    override fun getView(): View {
+        return indicator
+    }
+
+    override fun dispose() {}
+}
+
+internal class LinearIndicatorNativeView(context: Context, id: Int, creationParams: Map<String?, Any?>?) : PlatformView {
+    private val indicator: View = nativeLinearProgressIndicator(context, creationParams ?: mapOf())
+
+    override fun getView(): View {
+        return indicator
+    }
+
+    override fun dispose() {}
+}
+
+

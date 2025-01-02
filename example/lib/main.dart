@@ -13,56 +13,75 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  double progress = 0.5;
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(title: const Text('Plugin example app')),
         body: Center(
-          child: SizedBox(
-            width: 400,
-            child: Row(
-              spacing: 8,
-              children: [
-                Expanded(
-                  flex: 1,
-                  child: Column(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SizedBox(
+              width: 400,
+              child: Column(
+                spacing: 8,
+                children: [
+                  Row(
                     spacing: 8,
                     children: [
-                      Text('Flutter'),
-                      CircularProgressIndicator(),
-                      CircularProgressIndicator(
-                        value: 0.5,
-                        backgroundColor:
-                            Theme.of(context).colorScheme.secondaryContainer,
+                      Expanded(
+                        flex: 1,
+                        child: Column(
+                          spacing: 8,
+                          children: [
+                            Text('Flutter'),
+                            CircularProgressIndicator(),
+                            CircularProgressIndicator(
+                              value: 0.5,
+                              backgroundColor: Theme.of(context)
+                                  .colorScheme
+                                  .secondaryContainer,
+                            ),
+                            LinearProgressIndicator(),
+                            LinearProgressIndicator(
+                              value: 0.7,
+                            ),
+                          ],
+                        ),
                       ),
-                      LinearProgressIndicator(),
-                      LinearProgressIndicator(
-                        value: 0.7,
+                      Expanded(
+                        flex: 1,
+                        child: Column(
+                          spacing: 8,
+                          children: [
+                            Text('Native'),
+                            NativeCircularProgressIndicator(),
+                            NativeCircularProgressIndicator(
+                              value: 0.5,
+                              backgroundColor: Theme.of(context)
+                                  .colorScheme
+                                  .secondaryContainer,
+                            ),
+                            NativeLinearProgressIndicator(),
+                            NativeLinearProgressIndicator(
+                              value: 0.7,
+                            ),
+                          ],
+                        ),
                       ),
                     ],
                   ),
-                ),
-                Expanded(
-                  flex: 1,
-                  child: Column(
-                    spacing: 8,
-                    children: [
-                      Text('Native'),
-                      NativeCircularProgressIndicator(),
-                      // NativeCircularProgressIndicator(
-                      //   value: 0.5,
-                      //   backgroundColor:
-                      //       Theme.of(context).colorScheme.secondaryContainer,
-                      // ),
-                      // NativeLinearProgressIndicator(),
-                      // NativeLinearProgressIndicator(
-                      //   value: 0.7,
-                      // ),
-                    ],
+                  Slider(
+                    value: progress,
+                    onChanged: (newValue) =>
+                        setState(() => progress = newValue),
+                    min: 0,
+                    max: 1,
                   ),
-                ),
-              ],
+                  Text(progress.toString())
+                ],
+              ),
             ),
           ),
         ),

@@ -1,115 +1,98 @@
  package com.example.native_progress_indicator
 
- import androidx.compose.foundation.background
- import androidx.compose.foundation.layout.Box
- import androidx.compose.foundation.layout.fillMaxSize
- import androidx.compose.foundation.layout.fillMaxWidth
- import androidx.compose.foundation.layout.height
- import androidx.compose.material3.CircularProgressIndicator
- import androidx.compose.material3.LinearProgressIndicator
- import androidx.compose.runtime.Composable
- import androidx.compose.ui.graphics.Color
- import androidx.compose.ui.graphics.StrokeCap
- import androidx.compose.ui.Modifier
- import androidx.compose.ui.unit.dp
+ import android.content.Context
+ import android.graphics.Color
+ import android.view.View
+ import android.widget.FrameLayout
  import com.google.android.material.progressindicator.CircularProgressIndicator
+ import com.google.android.material.progressindicator.LinearProgressIndicator
 
 
+ fun nativeCircularProgressIndicator(context: Context, args: Map<String?, Any?>): View {
+     val value = (args["value"] as? Double)?.toInt()
+     val size = (args["size"] as? Double)?.toInt() ?: 36
 
- @Composable
- fun NativeIndeterminateCircularProgressIndicator(args: Map<String, Any?>) {
-     val progressColorMap = args["progressColor"] as? Map<*, *>
-     val progressColor = parseColor(progressColorMap)
-     val trackColorMap = args["trackColor"] as? Map<*, *>
-     val trackColor = parseColor(trackColorMap)
-     val strokeWidth = (args["strokeWidth"] as? Double)?.toFloat()?.dp ?: 4.dp
+     val progressColor = parseColorFromMap(args["progressColor"] as Map<String, Number>)
+     val trackColor = parseColorFromMap(args["trackColor"] as Map<String, Number>)
+     val strokeWidth = (args["strokeWidth"] as? Double)?.toInt() ?: 4
 
-     val a: CircularProgressIndicator;
-     a = CircularProgressIndicator()
-     CircularProgressIndicator(
-         color = progressColor,
-         trackColor = trackColor,
-         strokeCap = StrokeCap.Round,
-         strokeWidth = strokeWidth
-     )
- }
-
-
- @Composable
- fun NativeDeterminateCircularProgressIndicator(args: Map<String, Any?>) {
-     val value = (args["value"] as? Double)?.toFloat() ?: 0.0f
-     val progressColorMap = args["progressColor"] as? Map<*, *>
-     val progressColor = parseColor(progressColorMap)
-     val trackColorMap = args["trackColor"] as? Map<*, *>
-     val trackColor = parseColor(trackColorMap)
-     val strokeWidth = (args["strokeWidth"] as? Double)?.toFloat()?.dp ?: 4.dp
-
-     CircularProgressIndicator(
-         progress = value,
-         color = progressColor,
-         trackColor = trackColor,
-         strokeCap = StrokeCap.Round,
-         strokeWidth = strokeWidth
-     )
- }
-
- @Composable
- fun NativeIndeterminateLinearProgressIndicator(args: Map<String, Any?>) {
-     val progressColorMap = args["progressColor"] as? Map<*, *>
-     val progressColor = parseColor(progressColorMap)
-     val trackColorMap = args["trackColor"] as? Map<*, *>
-     val trackColor = parseColor(trackColorMap)
-     val height = (args["height"] as? Double)?.toFloat()?.dp ?: 4.dp
-
-
-     Box(
-         modifier = Modifier
-             .fillMaxWidth()
-             .height(height = height)
-             .background(trackColor)
-
-     ) {
-         LinearProgressIndicator(
-             color = progressColor,
-             trackColor = trackColor,
-             strokeCap = StrokeCap.Round,
-             modifier = Modifier.fillMaxSize()
-         )
+     val indicator = CircularProgressIndicator(context)
+     if (value != null) {
+         indicator.progress = value * 100
+         indicator.isIndeterminate = false
+     } else {
+         indicator.isIndeterminate = true
      }
- }
 
- @Composable
- fun NativeDeterminateLinearProgressIndicator(args: Map<String, Any?>) {
-     val value = (args["value"] as? Double)?.toFloat() ?: 0.0f
-     val progressColorMap = args["progressColor"] as? Map<*, *>
-     val progressColor = parseColor(progressColorMap)
-     val trackColorMap = args["trackColor"] as? Map<*, *>
-     val trackColor = parseColor(trackColorMap)
-     val height = (args["height"] as? Double)?.toFloat()?.dp ?: 4.dp
+     indicator.trackThickness = (strokeWidth * context.resources.displayMetrics.density).toInt()
+     indicator.trackColor = trackColor
+     indicator.setIndicatorColor(progressColor)
+     indicator.indicatorSize = (size * context.resources.displayMetrics.density).toInt()
 
-     Box(
-         modifier = Modifier
-             .fillMaxWidth()
-             .height(height = height)
-             .background(trackColor)
-     ) {
-         LinearProgressIndicator(
-             progress = value,
-             color = progressColor,
-             trackColor = trackColor,
-             strokeCap = StrokeCap.Round,
-             modifier = Modifier.fillMaxSize()
+     val parentLayout = FrameLayout(context).apply {
+         // Ensure the layout fills its parent
+         layoutParams = FrameLayout.LayoutParams(
+             FrameLayout.LayoutParams.MATCH_PARENT,
+             FrameLayout.LayoutParams.MATCH_PARENT
          )
+
+         // Add the indicator and make it fill the parent and centered
+         addView(indicator, FrameLayout.LayoutParams(
+             FrameLayout.LayoutParams.MATCH_PARENT,
+             FrameLayout.LayoutParams.MATCH_PARENT
+         ).apply {
+             gravity = android.view.Gravity.CENTER
+         })
      }
+
+     return parentLayout
  }
 
+ fun nativeLinearProgressIndicator(context: Context, args: Map<String?, Any?>): View {
+     val value = (args["value"] as? Double)?.toInt()
+     val progressColor = parseColorFromMap(args["progressColor"] as Map<String, Number>)
+     val trackColor = parseColorFromMap(args["trackColor"] as Map<String, Number>)
+     val height = (args["height"] as? Double)?.toInt() ?: 4
 
- // Helper function to parse color maps into Color objects
- private fun parseColor(colorMap: Map<*, *>?): Color {
-     if (colorMap == null) return Color.Black // Default to black if no color provided
-     val r = (colorMap["r"] as? Double)?.toInt() ?: 0
-     val g = (colorMap["g"] as? Double)?.toInt() ?: 0
-     val b = (colorMap["b"] as? Double)?.toInt() ?: 0
-     val a = (colorMap["a"] as? Double)?.toInt() ?: 255
-     return Color(android.graphics.Color.argb(a, r, g, b))
+     val indicator = LinearProgressIndicator(context)
+     if (value != null) {
+         indicator.progress = value * 100
+         indicator.isIndeterminate = false
+     } else {
+         indicator.isIndeterminate = true
+     }
+     indicator.trackThickness = (height * context.resources.displayMetrics.density).toInt()
+     indicator.trackColor = trackColor
+     indicator.setIndicatorColor(progressColor)
+
+     val parentLayout = FrameLayout(context).apply {
+         // Ensure the layout fills its parent
+         layoutParams = FrameLayout.LayoutParams(
+             FrameLayout.LayoutParams.MATCH_PARENT,
+             FrameLayout.LayoutParams.MATCH_PARENT
+         )
+
+         // Add the indicator and make it fill the parent and centered
+         addView(indicator, FrameLayout.LayoutParams(
+             FrameLayout.LayoutParams.MATCH_PARENT,
+             FrameLayout.LayoutParams.MATCH_PARENT
+         ).apply {
+             gravity = android.view.Gravity.CENTER
+         })
+     }
+
+     return parentLayout }
+
+ fun parseColorFromMap(colorMap: Map<String, Number>): Int {
+     val a = colorMap["a"]?.toInt() ?: 255 // Default alpha value if not provided
+     val r = colorMap["r"]?.toInt() ?: 0   // Default red value
+     val g = colorMap["g"]?.toInt() ?: 0   // Default green value
+     val b = colorMap["b"]?.toInt() ?: 0   // Default blue value
+
+     // Validate the values are within the 0-255 range
+     require(a in 0..255 && r in 0..255 && g in 0..255 && b in 0..255) {
+         "Color values must be in the range 0-255"
+     }
+
+     return Color.argb(a, r, g, b)
  }
