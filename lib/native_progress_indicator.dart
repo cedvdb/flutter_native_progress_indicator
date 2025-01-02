@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:native_progress_indicator/native_progress_indicator_platform_interface.dart';
 
 export 'native_progress_indicator_ios.dart';
+export 'native_progress_indicator_android.dart';
 
 class NativeCircularProgressIndicator extends StatelessWidget {
   final double? value;
@@ -42,14 +43,14 @@ class NativeCircularProgressIndicator extends StatelessWidget {
                   .buildIndeterminateCircularProgressIndicator(
                   progressColor: color,
                   trackColor: trackColor,
-                  thickness: strokeWidth,
+                  strokeWidth: strokeWidth,
                   size: constraints.maxWidth,
                 )
               : NativeProgressIndicatorPlatform.instance
                   .buildDeterminateCircularProgressIndicator(
                   progressColor: color,
                   trackColor: trackColor,
-                  thickness: strokeWidth,
+                  strokeWidth: strokeWidth,
                   value: value,
                   size: constraints.maxWidth,
                 ),
@@ -104,7 +105,7 @@ class NativeLinearProgressIndicator extends StatelessWidget {
                   trackColor: trackColor,
                   borderRadius: borderRadius?.resolve(TextDirection.ltr) ??
                       BorderRadius.zero,
-                  thickness: height,
+                  height: height,
                 )
               : NativeProgressIndicatorPlatform.instance
                   .buildDeterminateLinearProgressIndicator(
@@ -112,7 +113,7 @@ class NativeLinearProgressIndicator extends StatelessWidget {
                   trackColor: trackColor,
                   borderRadius: borderRadius?.resolve(TextDirection.ltr) ??
                       BorderRadius.zero,
-                  thickness: height,
+                  height: height,
                   value: value,
                 ),
         ),

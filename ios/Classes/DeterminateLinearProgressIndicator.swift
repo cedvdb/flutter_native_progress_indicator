@@ -4,7 +4,7 @@ struct DeterminateLinearProgressIndicator: View {
     var value: Float
     var trackColor: Color
     var progressColor: Color
-    var thickness: Float
+    var height: Float
     
     var body: some View {
         GeometryReader { geometry in
@@ -22,6 +22,6 @@ struct DeterminateLinearProgressIndicator: View {
                     .onAppear()
                     .animation(.easeOut, value: value)
             }
-        }.frame(height: CGFloat(thickness), alignment: .leading) 
+        }.frame(height: CGFloat(height), alignment: .leading) 
     }
 }

@@ -50,15 +50,15 @@ class _MyAppState extends State<MyApp> {
                     children: [
                       Text('Native'),
                       NativeCircularProgressIndicator(),
-                      NativeCircularProgressIndicator(
-                        value: 0.5,
-                        backgroundColor:
-                            Theme.of(context).colorScheme.secondaryContainer,
-                      ),
-                      NativeLinearProgressIndicator(),
-                      NativeLinearProgressIndicator(
-                        value: 0.7,
-                      ),
+                      // NativeCircularProgressIndicator(
+                      //   value: 0.5,
+                      //   backgroundColor:
+                      //       Theme.of(context).colorScheme.secondaryContainer,
+                      // ),
+                      // NativeLinearProgressIndicator(),
+                      // NativeLinearProgressIndicator(
+                      //   value: 0.7,
+                      // ),
                     ],
                   ),
                 ),

@@ -125,7 +125,7 @@ class IndeterminateCircularProgressNativeView: FLNativeView {
         
         var trackColor: Color
         var progressColor: Color
-        var thickness: Float
+        var strokeWidth: Float
         // Extracting parameters from Flutter arguments,
         // these are the parameters that are send from the Flutter code, using
         // "creationParams" parameter.
@@ -142,11 +142,11 @@ class IndeterminateCircularProgressNativeView: FLNativeView {
                 green: progressColorDictionary["g"]!,
                 blue: progressColorDictionary["b"]!,
                 opacity: progressColorDictionary["a"]!)
-            thickness = (params["thickness"] as? NSNumber)?.floatValue ?? 4
+            strokeWidth = (params["strokeWidth"] as? NSNumber)?.floatValue ?? 4
         } else {
             trackColor = Color(red: 0, green: 0, blue: 0)
             progressColor = Color(red: 255, green: 255, blue: 255)
-            thickness = 4
+            strokeWidth = 4
         }
 
         // iOS views can be created here
@@ -155,7 +155,7 @@ class IndeterminateCircularProgressNativeView: FLNativeView {
             indicator: IndeterminateCircularProgressIndicator(
                 trackColor: trackColor,
                 progressColor: progressColor,
-                thickness: thickness)
+                strokeWidth: strokeWidth)
         )
     }
 }
@@ -167,7 +167,7 @@ class DeterminateCircularProgressNativeView: FLNativeView {
         var value: Float
         var trackColor: Color
         var progressColor: Color
-        var thickness: Float
+        var strokeWidth: Float
         // Extracting parameters from Flutter arguments,
         // these are the parameters that are send from the Flutter code, using
         // "creationParams" parameter.
@@ -184,13 +184,13 @@ class DeterminateCircularProgressNativeView: FLNativeView {
                 green: progressColorDictionary["g"]!,
                 blue: progressColorDictionary["b"]!,
                 opacity: progressColorDictionary["a"]!)
-            thickness = (params["thickness"] as? NSNumber)?.floatValue ?? 4
+            strokeWidth = (params["strokeWidth"] as? NSNumber)?.floatValue ?? 4
             value  = (params["value"] as? NSNumber)?.floatValue ?? 0.5
             
         } else {
             trackColor = Color(red: 0, green: 0, blue: 0)
             progressColor = Color(red: 255, green: 255, blue: 255)
-            thickness = 4
+            strokeWidth = 4
             value = 0.5
         }
 
@@ -201,7 +201,7 @@ class DeterminateCircularProgressNativeView: FLNativeView {
                 value: value,
                 trackColor: trackColor,
                 progressColor: progressColor,
-                thickness: thickness)
+                strokeWidth: strokeWidth)
         )
     }
 }
@@ -213,7 +213,7 @@ class IndeterminateLinearProgressNativeView: FLNativeView {
         
         var trackColor: Color
         var progressColor: Color
-        var thickness: Float
+        var height: Float
         // Extracting parameters from Flutter arguments,
         // these are the parameters that are send from the Flutter code, using
         // "creationParams" parameter.
@@ -230,11 +230,11 @@ class IndeterminateLinearProgressNativeView: FLNativeView {
                 green: progressColorDictionary["g"]!,
                 blue: progressColorDictionary["b"]!,
                 opacity: progressColorDictionary["a"]!)
-            thickness = (params["thickness"] as? NSNumber)?.floatValue ?? 4
+            height = (params["height"] as? NSNumber)?.floatValue ?? 4
         } else {
             trackColor = Color(red: 0, green: 0, blue: 0)
             progressColor = Color(red: 255, green: 255, blue: 255)
-            thickness = 4
+            height = 4
         }
 
         // iOS views can be created here
@@ -243,7 +243,7 @@ class IndeterminateLinearProgressNativeView: FLNativeView {
             indicator: IndeterminateLinearProgressIndicator(
                 trackColor: trackColor,
                 progressColor: progressColor,
-                thickness: thickness)
+                height: height)
         )
     }
 }
@@ -255,7 +255,7 @@ class DeterminateLinearProgressNativeView: FLNativeView {
         var value: Float
         var trackColor: Color
         var progressColor: Color
-        var thickness: Float
+        var height: Float
         // Extracting parameters from Flutter arguments,
         // these are the parameters that are send from the Flutter code, using
         // "creationParams" parameter.
@@ -272,13 +272,13 @@ class DeterminateLinearProgressNativeView: FLNativeView {
                 green: progressColorDictionary["g"]!,
                 blue: progressColorDictionary["b"]!,
                 opacity: progressColorDictionary["a"]!)
-            thickness = (params["thickness"] as? NSNumber)?.floatValue ?? 4
+            height = (params["height"] as? NSNumber)?.floatValue ?? 4
             value  = (params["value"] as? NSNumber)?.floatValue ?? 0.5
             
         } else {
             trackColor = Color(red: 0, green: 0, blue: 0)
             progressColor = Color(red: 255, green: 255, blue: 255)
-            thickness = 4
+            height = 4
             value = 0.5
         }
 
@@ -289,7 +289,7 @@ class DeterminateLinearProgressNativeView: FLNativeView {
                 value: value,
                 trackColor: trackColor,
                 progressColor: progressColor,
-                thickness: thickness)
+                height: height)
         )
     }
 }
@@ -337,3 +337,5 @@ class FLNativeView: NSObject, FlutterPlatformView {
         vc.didMove(toParent: topController)
     }
 }
+
+

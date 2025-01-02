@@ -2,9 +2,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:native_progress_indicator/native_progress_indicator_platform_interface.dart';
 
-class NativeProgressIndicatorIos implements NativeProgressIndicatorPlatform {
+class NativeProgressIndicatorAndroid
+    implements NativeProgressIndicatorPlatform {
   static void registerWith() {
-    NativeProgressIndicatorPlatform.instance = NativeProgressIndicatorIos();
+    NativeProgressIndicatorPlatform.instance = NativeProgressIndicatorAndroid();
   }
 
   @override
@@ -15,7 +16,7 @@ class NativeProgressIndicatorIos implements NativeProgressIndicatorPlatform {
     required double value,
     required double size,
   }) {
-    return UiKitView(
+    return AndroidView(
       viewType:
           'native_progress_indicator/determinate_circular_progress_indicator',
       creationParams: {
@@ -46,7 +47,7 @@ class NativeProgressIndicatorIos implements NativeProgressIndicatorPlatform {
     required BorderRadius borderRadius,
     required double value,
   }) {
-    return UiKitView(
+    return AndroidView(
       viewType:
           'native_progress_indicator/determinate_linear_progress_indicator',
       creationParams: {
@@ -76,7 +77,7 @@ class NativeProgressIndicatorIos implements NativeProgressIndicatorPlatform {
     required double strokeWidth,
     required double size,
   }) {
-    return UiKitView(
+    return AndroidView(
       viewType:
           'native_progress_indicator/indeterminate_circular_progress_indicator',
       creationParams: {
@@ -104,7 +105,7 @@ class NativeProgressIndicatorIos implements NativeProgressIndicatorPlatform {
       required Color trackColor,
       required double height,
       required BorderRadius borderRadius}) {
-    return UiKitView(
+    return AndroidView(
       viewType:
           'native_progress_indicator/indeterminate_linear_progress_indicator',
       creationParams: {

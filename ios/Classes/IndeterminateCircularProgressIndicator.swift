@@ -3,7 +3,7 @@ import SwiftUI
 struct IndeterminateCircularProgressIndicator: View {
     var trackColor: Color
     var progressColor: Color
-    var thickness: Float
+    var strokeWidth: Float
     
     @State private var start: Float = 0.4
     @State private var end: Float = 0.6
@@ -14,13 +14,13 @@ struct IndeterminateCircularProgressIndicator: View {
         ZStack {
             // track
             Circle()
-                .stroke(lineWidth: CGFloat(thickness))
+                .stroke(lineWidth: CGFloat(strokeWidth))
                 .foregroundColor(trackColor)
             
             // progress
             Circle()
                 .trim(from: CGFloat(start), to: CGFloat(end))
-                .stroke(style: StrokeStyle(lineWidth: CGFloat(thickness), lineCap: .round))
+                .stroke(style: StrokeStyle(lineWidth: CGFloat(strokeWidth), lineCap: .round))
                 .foregroundColor(progressColor)
                 .rotationEffect(Angle(degrees: -90))
         }.rotationEffect(Angle(degrees: rotationAngle))

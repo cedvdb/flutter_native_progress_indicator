@@ -4,7 +4,7 @@ import SwiftUI
 struct IndeterminateLinearProgressIndicator: View {
     var trackColor: Color
     var progressColor: Color
-    var thickness: Float
+    var height: Float
     
     @State var width: Float = 20
     @State var offset: Float = -20
@@ -25,7 +25,7 @@ struct IndeterminateLinearProgressIndicator: View {
                     .offset(x: CGFloat(offset))
                     .onAppear { startAnimating(frameWidth: Float(frameWidth)) }
             }
-        }.frame(height: CGFloat(thickness), alignment: .leading).clipped()
+        }.frame(height: CGFloat(height), alignment: .leading).clipped()
         
     }
     

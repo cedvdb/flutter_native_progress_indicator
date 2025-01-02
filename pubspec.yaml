@@ -1,5 +1,5 @@
 name: native_progress_indicator
-description: "A new Flutter plugin project."
+description: "Flutter progress indicators as platform views"
 version: 0.0.1
 
 environment:
@@ -36,6 +36,9 @@ flutter:
       android:
         package: com.example.native_progress_indicator
         pluginClass: NativeProgressIndicatorPlugin
+        dartPluginClass: NativeProgressIndicatorAndroid
+        dartClassName: NativeProgressIndicatorAndroid
+        dartFileName: native_progress_indicator_android.dart
       ios:
         pluginClass: NativeProgressIndicatorPlugin
         dartPluginClass: NativeProgressIndicatorIos

@@ -23,12 +23,12 @@ class NativeProgressIndicatorWeb extends NativeProgressIndicatorPlatform {
   Widget buildIndeterminateCircularProgressIndicator({
     required Color progressColor,
     required Color trackColor,
-    required double thickness,
+    required double strokeWidth,
     required double size,
   }) =>
       _CircularProgressIndicatorBuilder().indeterminate(
         color: progressColor,
-        strokeWidth: thickness,
+        strokeWidth: strokeWidth,
         trackColor: trackColor,
         size: size,
       );
@@ -37,13 +37,13 @@ class NativeProgressIndicatorWeb extends NativeProgressIndicatorPlatform {
   Widget buildDeterminateCircularProgressIndicator({
     required Color progressColor,
     required Color trackColor,
-    required double thickness,
+    required double strokeWidth,
     required double value,
     required double size,
   }) =>
       _CircularProgressIndicatorBuilder().determinate(
         color: progressColor,
-        strokeWidth: thickness,
+        strokeWidth: strokeWidth,
         value: value,
         trackColor: trackColor,
         size: size,
@@ -53,21 +53,21 @@ class NativeProgressIndicatorWeb extends NativeProgressIndicatorPlatform {
   Widget buildIndeterminateLinearProgressIndicator({
     required Color progressColor,
     required Color trackColor,
-    required double thickness,
+    required double height,
     required BorderRadius borderRadius,
   }) =>
       _LinearProgressIndicatorBuilder().indeterminate(
         color: progressColor,
         trackColor: trackColor,
         borderRadius: borderRadius,
-        height: thickness,
+        height: height,
       );
 
   @override
   Widget buildDeterminateLinearProgressIndicator({
     required Color progressColor,
     required Color trackColor,
-    required double thickness,
+    required double height,
     required BorderRadius borderRadius,
     required double value,
   }) =>
@@ -75,7 +75,7 @@ class NativeProgressIndicatorWeb extends NativeProgressIndicatorPlatform {
         color: progressColor,
         trackColor: trackColor,
         borderRadius: borderRadius,
-        height: thickness,
+        height: height,
         value: value,
       );
 }

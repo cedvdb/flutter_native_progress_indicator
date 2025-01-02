@@ -12,7 +12,7 @@ abstract class NativeProgressIndicatorPlatform extends PlatformInterface {
   Widget buildIndeterminateCircularProgressIndicator({
     required Color progressColor,
     required Color trackColor,
-    required double thickness,
+    required double strokeWidth,
     required double size,
   }) {
     throw UnimplementedError(
@@ -22,7 +22,7 @@ abstract class NativeProgressIndicatorPlatform extends PlatformInterface {
   Widget buildDeterminateCircularProgressIndicator({
     required Color progressColor,
     required Color trackColor,
-    required double thickness,
+    required double strokeWidth,
     required double value,
     required double size,
   }) {
@@ -33,7 +33,7 @@ abstract class NativeProgressIndicatorPlatform extends PlatformInterface {
   Widget buildIndeterminateLinearProgressIndicator({
     required Color progressColor,
     required Color trackColor,
-    required double thickness,
+    required double height,
     required BorderRadius borderRadius,
   }) {
     throw UnimplementedError(
@@ -43,7 +43,7 @@ abstract class NativeProgressIndicatorPlatform extends PlatformInterface {
   Widget buildDeterminateLinearProgressIndicator({
     required Color progressColor,
     required Color trackColor,
-    required double thickness,
+    required double height,
     required BorderRadius borderRadius,
     required double value,
   }) {
