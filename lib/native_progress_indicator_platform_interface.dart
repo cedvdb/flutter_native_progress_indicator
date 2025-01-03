@@ -1,6 +1,70 @@
 import 'package:flutter/widgets.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
+class CircularProgressIndicatorParams {
+  final double? value;
+  final Color progressColor;
+  final Color trackColor;
+  final double strokeWidth;
+  final double size;
+
+  CircularProgressIndicatorParams({
+    required this.value,
+    required this.progressColor,
+    required this.trackColor,
+    required this.strokeWidth,
+    required this.size,
+  });
+
+  CircularProgressIndicatorParams copyWith({
+    double? value,
+    Color? progressColor,
+    Color? trackColor,
+    double? strokeWidth,
+    double? size,
+  }) {
+    return CircularProgressIndicatorParams(
+      value: value ?? this.value,
+      progressColor: progressColor ?? this.progressColor,
+      trackColor: trackColor ?? this.trackColor,
+      strokeWidth: strokeWidth ?? this.strokeWidth,
+      size: size ?? this.size,
+    );
+  }
+}
+
+class LinearProgressIndicatorParams {
+  final double? value;
+  final Color progressColor;
+  final Color trackColor;
+  final double height;
+  final BorderRadius borderRadius;
+
+  LinearProgressIndicatorParams({
+    required this.value,
+    required this.progressColor,
+    required this.trackColor,
+    required this.height,
+    required this.borderRadius,
+  });
+
+  LinearProgressIndicatorParams copyWith({
+    double? value,
+    Color? progressColor,
+    Color? trackColor,
+    double? height,
+    BorderRadius? borderRadius,
+  }) {
+    return LinearProgressIndicatorParams(
+      value: value ?? this.value,
+      progressColor: progressColor ?? this.progressColor,
+      trackColor: trackColor ?? this.trackColor,
+      height: height ?? this.height,
+      borderRadius: borderRadius ?? this.borderRadius,
+    );
+  }
+}
+
 abstract class NativeProgressIndicatorPlatform extends PlatformInterface {
   /// Constructs a NativeProgressIndicatorPlatform.
   NativeProgressIndicatorPlatform() : super(token: _token);
@@ -9,49 +73,31 @@ abstract class NativeProgressIndicatorPlatform extends PlatformInterface {
 
   static late NativeProgressIndicatorPlatform instance;
 
-  Widget buildIndeterminateCircularProgressIndicator({
-    required Color progressColor,
-    required Color trackColor,
-    required double strokeWidth,
-    required double size,
+  Widget buildCircularProgressIndicator({
+    required CircularProgressIndicatorParams params,
     required Function(int viewId) onPlatformViewCreated,
   }) {
-    throw UnimplementedError(
-        'buildIndeterminateCircularProgressIndicator() has not been implemented.');
+    throw UnimplementedError();
   }
 
-  Widget buildDeterminateCircularProgressIndicator({
-    required Color progressColor,
-    required Color trackColor,
-    required double strokeWidth,
-    required double value,
-    required double size,
-    required Function(int viewId) onPlatformViewCreated,
+  void updateCircularIndicator({
+    required CircularProgressIndicatorParams params,
+    required int viewId,
   }) {
-    throw UnimplementedError(
-        'buildDeterminateCircularProgressIndicator() has not been implemented.');
+    throw UnimplementedError();
   }
 
-  Widget buildIndeterminateLinearProgressIndicator({
-    required Color progressColor,
-    required Color trackColor,
-    required double height,
-    required BorderRadius borderRadius,
+  Widget buildLinearProgressIndicator({
+    required LinearProgressIndicatorParams params,
     required Function(int viewId) onPlatformViewCreated,
   }) {
-    throw UnimplementedError(
-        'buildIndeterminateCircularProgressIndicator() has not been implemented.');
+    throw UnimplementedError();
   }
 
-  Widget buildDeterminateLinearProgressIndicator({
-    required Color progressColor,
-    required Color trackColor,
-    required double height,
-    required BorderRadius borderRadius,
-    required double value,
-    required Function(int viewId) onPlatformViewCreated,
+  void updateLinearIndicator({
+    required LinearProgressIndicatorParams params,
+    required int viewId,
   }) {
-    throw UnimplementedError(
-        'buildIndeterminateCircularProgressIndicator() has not been implemented.');
+    throw UnimplementedError();
   }
 }

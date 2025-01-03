@@ -36,7 +36,7 @@
      }
 
      override fun updateView(params: Map<String?, Any?>) {
-         val value = (params["value"] as? Double)?.toInt()
+         val value = params["value"] as? Double
          val size = (params["size"] as? Double)?.toInt() ?: 36
 
          val progressColor = parseColorFromMap(params["progressColor"] as Map<String, Number>)
@@ -44,7 +44,7 @@
          val strokeWidth = (params["strokeWidth"] as? Double)?.toInt() ?: 4
 
          if (value != null) {
-             indicator.progress = value * 100
+             indicator.progress = (value  * 100).toInt()
              indicator.isIndeterminate = false
          } else {
              indicator.isIndeterminate = true
@@ -85,13 +85,13 @@
      }
 
      override fun updateView(params: Map<String?, Any?>) {
-         val value = (params["value"] as? Double)?.toInt()
+         val value = params["value"] as? Double
          val progressColor = parseColorFromMap(params["progressColor"] as Map<String, Number>)
          val trackColor = parseColorFromMap(params["trackColor"] as Map<String, Number>)
          val height = (params["height"] as? Double)?.toInt() ?: 4
 
          if (value != null) {
-             indicator.progress = value * 100
+             indicator.progress = (value  * 100).toInt()
              indicator.isIndeterminate = false
          } else {
              indicator.isIndeterminate = true

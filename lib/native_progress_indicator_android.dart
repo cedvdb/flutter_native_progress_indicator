@@ -2,7 +2,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:native_progress_indicator/native_progress_indicator_platform_interface.dart';
 
-extension MapExtension on Color {
+extension _MapExtension on Color {
   Map<String, int> toMap() {
     return {
       'a': (a * 255).toInt(),
@@ -15,135 +15,85 @@ extension MapExtension on Color {
 
 class NativeProgressIndicatorAndroid
     implements NativeProgressIndicatorPlatform {
+  final _channel = MethodChannel(
+    'native_progress_indicator',
+  );
+
   static void registerWith() {
     NativeProgressIndicatorPlatform.instance = NativeProgressIndicatorAndroid();
   }
 
-  void _initChannel(int viewId) {
-    // Initialize a channel scoped to this view instance
-    final viewChannel = MethodChannel(
-      'native_progress_indicator/view_$viewId',
+  @override
+  Widget buildCircularProgressIndicator({
+    required CircularProgressIndicatorParams params,
+    required Function(int viewId) onPlatformViewCreated,
+  }) {
+    return AndroidView(
+      viewType: 'native_progress_indicator/circular',
+      creationParams: {
+        'progressColor': params.progressColor.toMap(),
+        'trackColor': params.trackColor.toMap(),
+        'strokeWidth': params.strokeWidth,
+        'value': params.value,
+        'size': params.size,
+      },
+      creationParamsCodec: const StandardMessageCodec(),
+      onPlatformViewCreated: (int viewId) {
+        onPlatformViewCreated(viewId);
+      },
     );
+  }
 
-    // Handle incoming messages if necessary
-    viewChannel.setMethodCallHandler((call) async {
-      // Handle method calls from the native side if needed
+  @override
+  Widget buildLinearProgressIndicator({
+    required LinearProgressIndicatorParams params,
+    required Function(int viewId) onPlatformViewCreated,
+  }) {
+    return AndroidView(
+      viewType: 'native_progress_indicator/linear',
+      creationParams: {
+        'progressColor': params.progressColor.toMap(),
+        'trackColor': params.trackColor.toMap(),
+        'height': params.height,
+        'value': params.value,
+      },
+      creationParamsCodec: const StandardMessageCodec(),
+      onPlatformViewCreated: (int viewId) {
+        onPlatformViewCreated(viewId);
+      },
+    );
+  }
+
+  @override
+  void updateCircularIndicator({
+    required CircularProgressIndicatorParams params,
+    required int viewId,
+  }) {
+    _channel.invokeMethod('updateCircularIndicator', {
+      'viewId': viewId,
+      'params': {
+        'progressColor': params.progressColor.toMap(),
+        'trackColor': params.trackColor.toMap(),
+        'strokeWidth': params.strokeWidth,
+        'value': params.value,
+        'size': params.size,
+      }
     });
   }
 
-  Future<void> updateProgressIndicator(
-    int viewId,
-    Map<String, Object?> params,
-  ) async {
-    final viewChannel = MethodChannel(
-      'native_progress_indicator/view_$viewId',
-    );
-    await viewChannel.invokeMethod('updateParams', params);
-  }
-
   @override
-  Widget buildDeterminateCircularProgressIndicator({
-    required Color progressColor,
-    required Color trackColor,
-    required double strokeWidth,
-    required double value,
-    required double size,
-    required Function(int viewId) onPlatformViewCreated,
+  void updateLinearIndicator({
+    required LinearProgressIndicatorParams params,
+    required int viewId,
   }) {
-    return AndroidView(
-      viewType:
-          'native_progress_indicator/determinate_circular_progress_indicator',
-      creationParams: {
-        'progressColor': progressColor.toMap(),
-        'trackColor': trackColor.toMap(),
-        'strokeWidth': strokeWidth,
-        'value': value,
-        'size': size,
-        'type': 'circular'
-      },
-      creationParamsCodec: const StandardMessageCodec(),
-      onPlatformViewCreated: (int viewId) {
-        _initChannel(viewId);
-        onPlatformViewCreated(viewId);
-      },
-    );
-  }
-
-  @override
-  Widget buildDeterminateLinearProgressIndicator({
-    required Color progressColor,
-    required Color trackColor,
-    required double height,
-    required BorderRadius borderRadius,
-    required double value,
-    required Function(int viewId) onPlatformViewCreated,
-  }) {
-    return AndroidView(
-      viewType:
-          'native_progress_indicator/determinate_linear_progress_indicator',
-      creationParams: {
-        'progressColor': progressColor.toMap(),
-        'trackColor': trackColor.toMap(),
-        'height': height,
-        'value': value,
-        'type': 'linear'
-      },
-      creationParamsCodec: const StandardMessageCodec(),
-      onPlatformViewCreated: (int viewId) {
-        _initChannel(viewId);
-        onPlatformViewCreated(viewId);
-      },
-    );
-  }
-
-  @override
-  Widget buildIndeterminateCircularProgressIndicator({
-    required Color progressColor,
-    required Color trackColor,
-    required double strokeWidth,
-    required double size,
-    required Function(int viewId) onPlatformViewCreated,
-  }) {
-    return AndroidView(
-      viewType:
-          'native_progress_indicator/indeterminate_circular_progress_indicator',
-      creationParams: {
-        'progressColor': progressColor.toMap(),
-        'trackColor': trackColor.toMap(),
-        'strokeWidth': strokeWidth,
-        'size': size,
-        'type': 'circular'
-      },
-      creationParamsCodec: const StandardMessageCodec(),
-      onPlatformViewCreated: (int viewId) {
-        _initChannel(viewId);
-        onPlatformViewCreated(viewId);
-      },
-    );
-  }
-
-  @override
-  Widget buildIndeterminateLinearProgressIndicator({
-    required Color progressColor,
-    required Color trackColor,
-    required double height,
-    required BorderRadius borderRadius,
-    required Function(int viewId) onPlatformViewCreated,
-  }) {
-    return AndroidView(
-      viewType:
-          'native_progress_indicator/indeterminate_linear_progress_indicator',
-      creationParams: {
-        'progressColor': progressColor.toMap(),
-        'trackColor': trackColor.toMap(),
-        'height': height,
-        'type': 'linear'
-      },
-      creationParamsCodec: const StandardMessageCodec(),
-      onPlatformViewCreated: (int viewId) {
-        _initChannel(viewId);
-        onPlatformViewCreated(viewId);
-      },
-    );
+    _channel.invokeMethod('updateLinearIndicator', {
+      'viewId': viewId,
+      'params': {
+        'progressColor': params.progressColor.toMap(),
+        'trackColor': params.trackColor.toMap(),
+        'height': params.height,
+        'value': params.value,
+      }
+    });
   }
 }

@@ -20,32 +20,27 @@ class NativeProgressIndicatorIos implements NativeProgressIndicatorPlatform {
   }
 
   @override
-  Widget buildDeterminateCircularProgressIndicator({
-    required Color progressColor,
-    required Color trackColor,
-    required double strokeWidth,
-    required double value,
-    required double size,
+  Widget buildCircularProgressIndicator({
+    required CircularProgressIndicatorParams params,
     required Function(int viewId) onPlatformViewCreated,
   }) {
     return UiKitView(
-      viewType:
-          'native_progress_indicator/determinate_circular_progress_indicator',
+      viewType: 'native_progress_indicator/circular',
       creationParams: {
         'progressColor': {
-          'r': progressColor.r,
-          'g': progressColor.g,
-          'b': progressColor.b,
-          'a': progressColor.a
+          'r': params.progressColor.r * 255,
+          'g': params.progressColor.g * 255,
+          'b': params.progressColor.b * 255,
+          'a': params.progressColor.a * 255
         },
         'trackColor': {
-          'r': trackColor.r,
-          'g': trackColor.g,
-          'b': trackColor.b,
-          'a': trackColor.a
+          'r': params.trackColor.r * 255,
+          'g': params.trackColor.g * 255,
+          'b': params.trackColor.b * 255,
+          'a': params.trackColor.a * 255
         },
-        'strokeWidth': strokeWidth,
-        'value': value,
+        'strokeWidth': params.strokeWidth,
+        'value': params.value,
       },
       creationParamsCodec: const StandardMessageCodec(),
       onPlatformViewCreated: (int viewId) {
@@ -56,32 +51,27 @@ class NativeProgressIndicatorIos implements NativeProgressIndicatorPlatform {
   }
 
   @override
-  Widget buildDeterminateLinearProgressIndicator({
-    required Color progressColor,
-    required Color trackColor,
-    required double height,
-    required BorderRadius borderRadius,
-    required double value,
+  Widget buildLinearProgressIndicator({
+    required LinearProgressIndicatorParams params,
     required Function(int viewId) onPlatformViewCreated,
   }) {
     return UiKitView(
-      viewType:
-          'native_progress_indicator/determinate_linear_progress_indicator',
+      viewType: 'native_progress_indicator/linear',
       creationParams: {
         'progressColor': {
-          'r': progressColor.r,
-          'g': progressColor.g,
-          'b': progressColor.b,
-          'a': progressColor.a
+          'r': params.progressColor.r * 255,
+          'g': params.progressColor.g * 255,
+          'b': params.progressColor.b * 255,
+          'a': params.progressColor.a * 255
         },
         'trackColor': {
-          'r': trackColor.r,
-          'g': trackColor.g,
-          'b': trackColor.b,
-          'a': trackColor.a
+          'r': params.trackColor.r * 255,
+          'g': params.trackColor.g * 255,
+          'b': params.trackColor.b * 255,
+          'a': params.trackColor.a * 255
         },
-        'height': height,
-        'value': value,
+        'height': params.height,
+        'value': params.value,
       },
       creationParamsCodec: const StandardMessageCodec(),
       onPlatformViewCreated: (int viewId) {
@@ -92,70 +82,16 @@ class NativeProgressIndicatorIos implements NativeProgressIndicatorPlatform {
   }
 
   @override
-  Widget buildIndeterminateCircularProgressIndicator({
-    required Color progressColor,
-    required Color trackColor,
-    required double strokeWidth,
-    required double size,
-    required Function(int viewId) onPlatformViewCreated,
-  }) {
-    return UiKitView(
-      viewType:
-          'native_progress_indicator/indeterminate_circular_progress_indicator',
-      creationParams: {
-        'progressColor': {
-          'r': progressColor.r,
-          'g': progressColor.g,
-          'b': progressColor.b,
-          'a': progressColor.a
-        },
-        'trackColor': {
-          'r': trackColor.r,
-          'g': trackColor.g,
-          'b': trackColor.b,
-          'a': trackColor.a
-        },
-        'strokeWidth': strokeWidth
-      },
-      creationParamsCodec: const StandardMessageCodec(),
-      onPlatformViewCreated: (int viewId) {
-        _initChannel(viewId);
-        onPlatformViewCreated(viewId);
-      },
-    );
-  }
+  void updateCircularIndicator({
+    required CircularProgressIndicatorParams params,
+    required int viewId,
+  }) {}
 
   @override
-  Widget buildIndeterminateLinearProgressIndicator({
-    required Color progressColor,
-    required Color trackColor,
-    required double height,
-    required BorderRadius borderRadius,
-    required Function(int viewId) onPlatformViewCreated,
+  void updateLinearIndicator({
+    required LinearProgressIndicatorParams params,
+    required int viewId,
   }) {
-    return UiKitView(
-      viewType:
-          'native_progress_indicator/indeterminate_linear_progress_indicator',
-      creationParams: {
-        'progressColor': {
-          'r': progressColor.r,
-          'g': progressColor.g,
-          'b': progressColor.b,
-          'a': progressColor.a
-        },
-        'trackColor': {
-          'r': trackColor.r,
-          'g': trackColor.g,
-          'b': trackColor.b,
-          'a': trackColor.a
-        },
-        'height': height
-      },
-      creationParamsCodec: const StandardMessageCodec(),
-      onPlatformViewCreated: (int viewId) {
-        _initChannel(viewId);
-        onPlatformViewCreated(viewId);
-      },
-    );
+    // TODO: implement updateLinearIndicator
   }
 }

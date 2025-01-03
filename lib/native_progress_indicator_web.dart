@@ -20,68 +20,48 @@ class NativeProgressIndicatorWeb extends NativeProgressIndicatorPlatform {
   }
 
   @override
-  Widget buildIndeterminateCircularProgressIndicator({
-    required Color progressColor,
-    required Color trackColor,
-    required double strokeWidth,
-    required double size,
+  Widget buildCircularProgressIndicator({
+    required CircularProgressIndicatorParams params,
     required Function(int viewId) onPlatformViewCreated,
-  }) =>
-      _CircularProgressIndicatorBuilder().indeterminate(
-        color: progressColor,
-        strokeWidth: strokeWidth,
-        trackColor: trackColor,
-        size: size,
-      );
+  }) {
+    final value = params.value;
+    return value != null
+        ? _CircularProgressIndicatorBuilder().determinate(
+            value: value,
+            color: params.progressColor,
+            strokeWidth: params.strokeWidth,
+            trackColor: params.trackColor,
+            size: params.size,
+          )
+        : _CircularProgressIndicatorBuilder().indeterminate(
+            color: params.progressColor,
+            strokeWidth: params.strokeWidth,
+            trackColor: params.trackColor,
+            size: params.size,
+          );
+  }
 
   @override
-  Widget buildDeterminateCircularProgressIndicator({
-    required Color progressColor,
-    required Color trackColor,
-    required double strokeWidth,
-    required double value,
-    required double size,
+  Widget buildLinearProgressIndicator({
+    required LinearProgressIndicatorParams params,
     required Function(int viewId) onPlatformViewCreated,
-  }) =>
-      _CircularProgressIndicatorBuilder().determinate(
-        color: progressColor,
-        strokeWidth: strokeWidth,
-        value: value,
-        trackColor: trackColor,
-        size: size,
-      );
-
-  @override
-  Widget buildIndeterminateLinearProgressIndicator({
-    required Color progressColor,
-    required Color trackColor,
-    required double height,
-    required BorderRadius borderRadius,
-    required Function(int viewId) onPlatformViewCreated,
-  }) =>
-      _LinearProgressIndicatorBuilder().indeterminate(
-        color: progressColor,
-        trackColor: trackColor,
-        borderRadius: borderRadius,
-        height: height,
-      );
-
-  @override
-  Widget buildDeterminateLinearProgressIndicator({
-    required Color progressColor,
-    required Color trackColor,
-    required double height,
-    required BorderRadius borderRadius,
-    required double value,
-    required Function(int viewId) onPlatformViewCreated,
-  }) =>
-      _LinearProgressIndicatorBuilder().determinate(
-        color: progressColor,
-        trackColor: trackColor,
-        borderRadius: borderRadius,
-        height: height,
-        value: value,
-      );
+  }) {
+    final value = params.value;
+    return value != null
+        ? _LinearProgressIndicatorBuilder().determinate(
+            color: params.progressColor,
+            trackColor: params.trackColor,
+            borderRadius: params.borderRadius,
+            height: params.height,
+            value: value,
+          )
+        : _LinearProgressIndicatorBuilder().indeterminate(
+            color: params.progressColor,
+            trackColor: params.trackColor,
+            borderRadius: params.borderRadius,
+            height: params.height,
+          );
+  }
 }
 
 class _CircularProgressIndicatorBuilder {
