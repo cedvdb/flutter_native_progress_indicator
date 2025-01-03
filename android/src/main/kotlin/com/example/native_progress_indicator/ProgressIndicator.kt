@@ -39,8 +39,8 @@
          val value = params["value"] as? Double
          val size = (params["size"] as? Double)?.toInt() ?: 36
 
-         val progressColor = parseColorFromMap(params["progressColor"] as Map<String, Number>)
-         val trackColor = parseColorFromMap(params["trackColor"] as Map<String, Number>)
+         val progressColor = parseColor(params["progressColor"] as Map<String, Number>)
+         val trackColor = parseColor(params["trackColor"] as Map<String, Number>)
          val strokeWidth = (params["strokeWidth"] as? Double)?.toInt() ?: 4
 
          if (value != null) {
@@ -86,8 +86,8 @@
 
      override fun updateView(params: Map<String?, Any?>) {
          val value = params["value"] as? Double
-         val progressColor = parseColorFromMap(params["progressColor"] as Map<String, Number>)
-         val trackColor = parseColorFromMap(params["trackColor"] as Map<String, Number>)
+         val progressColor = parseColor(params["progressColor"] as Map<String, Number>)
+         val trackColor = parseColor(params["trackColor"] as Map<String, Number>)
          val height = (params["height"] as? Double)?.toInt() ?: 4
 
          if (value != null) {
@@ -108,16 +108,16 @@
      fun updateView(params: Map<String?, Any?>)
  }
 
- fun parseColorFromMap(colorMap: Map<String, Number>): Int {
-     val a = colorMap["a"]?.toInt() ?: 255 // Default alpha value if not provided
-     val r = colorMap["r"]?.toInt() ?: 0   // Default red value
-     val g = colorMap["g"]?.toInt() ?: 0   // Default green value
-     val b = colorMap["b"]?.toInt() ?: 0   // Default blue value
+fun parseColor(colorMap: Map<String, Number>): Int {
+ val a = ((colorMap["a"]?.toDouble() ?: 0.0) * 255).toInt()
+ val r = ((colorMap["r"]?.toDouble() ?: 0.0) * 255).toInt()
+ val g = ((colorMap["g"]?.toDouble() ?: 0.0) * 255).toInt()
+ val b = ((colorMap["b"]?.toDouble() ?: 0.0) * 255).toInt()
 
-     // Validate the values are within the 0-255 range
-     require(a in 0..255 && r in 0..255 && g in 0..255 && b in 0..255) {
-         "Color values must be in the range 0-255"
-     }
-
-     return Color.argb(a, r, g, b)
+ // Ensure the converted values are within the 0-255 range
+ require(a in 0..255 && r in 0..255 && g in 0..255 && b in 0..255) {
+     "Normalized color values must be in the range 0.0-1.0"
  }
+
+ return Color.argb(a, r, g, b)
+}

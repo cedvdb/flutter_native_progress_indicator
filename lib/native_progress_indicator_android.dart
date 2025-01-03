@@ -2,17 +2,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:native_progress_indicator/native_progress_indicator_platform_interface.dart';
 
-extension _MapExtension on Color {
-  Map<String, int> toMap() {
-    return {
-      'a': (a * 255).toInt(),
-      'r': (r * 255).toInt(),
-      'g': (g * 255).toInt(),
-      'b': (b * 255).toInt(),
-    };
-  }
-}
-
 class NativeProgressIndicatorAndroid
     implements NativeProgressIndicatorPlatform {
   final _channel = MethodChannel(
@@ -30,13 +19,7 @@ class NativeProgressIndicatorAndroid
   }) {
     return AndroidView(
       viewType: 'native_progress_indicator/circular',
-      creationParams: {
-        'progressColor': params.progressColor.toMap(),
-        'trackColor': params.trackColor.toMap(),
-        'strokeWidth': params.strokeWidth,
-        'value': params.value,
-        'size': params.size,
-      },
+      creationParams: params.toMap(),
       creationParamsCodec: const StandardMessageCodec(),
       onPlatformViewCreated: (int viewId) {
         onPlatformViewCreated(viewId);
@@ -51,12 +34,7 @@ class NativeProgressIndicatorAndroid
   }) {
     return AndroidView(
       viewType: 'native_progress_indicator/linear',
-      creationParams: {
-        'progressColor': params.progressColor.toMap(),
-        'trackColor': params.trackColor.toMap(),
-        'height': params.height,
-        'value': params.value,
-      },
+      creationParams: params.toMap(),
       creationParamsCodec: const StandardMessageCodec(),
       onPlatformViewCreated: (int viewId) {
         onPlatformViewCreated(viewId);
@@ -69,16 +47,8 @@ class NativeProgressIndicatorAndroid
     required CircularProgressIndicatorParams params,
     required int viewId,
   }) {
-    _channel.invokeMethod('updateCircularIndicator', {
-      'viewId': viewId,
-      'params': {
-        'progressColor': params.progressColor.toMap(),
-        'trackColor': params.trackColor.toMap(),
-        'strokeWidth': params.strokeWidth,
-        'value': params.value,
-        'size': params.size,
-      }
-    });
+    _channel.invokeMethod('updateCircularIndicator',
+        {'viewId': viewId, 'params': params.toMap()});
   }
 
   @override
@@ -86,14 +56,7 @@ class NativeProgressIndicatorAndroid
     required LinearProgressIndicatorParams params,
     required int viewId,
   }) {
-    _channel.invokeMethod('updateLinearIndicator', {
-      'viewId': viewId,
-      'params': {
-        'progressColor': params.progressColor.toMap(),
-        'trackColor': params.trackColor.toMap(),
-        'height': params.height,
-        'value': params.value,
-      }
-    });
+    _channel.invokeMethod(
+        'updateLinearIndicator', {'viewId': viewId, 'params': params.toMap()});
   }
 }

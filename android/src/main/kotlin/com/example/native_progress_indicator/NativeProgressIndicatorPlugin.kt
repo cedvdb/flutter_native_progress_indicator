@@ -53,7 +53,6 @@ class NativeProgressIndicatorPlugin : FlutterPlugin, MethodCallHandler {
                 val params = call.argument<Map<String?, Any?>>("params")
                 linearIndicatorFactory.updateView(viewId, params)
             }
-
             else -> result.notImplemented()
         }
     }

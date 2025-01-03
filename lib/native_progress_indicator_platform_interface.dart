@@ -1,6 +1,12 @@
 import 'package:flutter/widgets.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
+extension _MapExtension on Color {
+  Map<String, double> toMap() {
+    return {'a': a, 'r': r, 'g': g, 'b': b};
+  }
+}
+
 class CircularProgressIndicatorParams {
   final double? value;
   final Color progressColor;
@@ -30,6 +36,16 @@ class CircularProgressIndicatorParams {
       strokeWidth: strokeWidth ?? this.strokeWidth,
       size: size ?? this.size,
     );
+  }
+
+  Map<String, Object?> toMap() {
+    return {
+      'progressColor': progressColor.toMap(),
+      'trackColor': trackColor.toMap(),
+      'strokeWidth': strokeWidth,
+      'value': value,
+      'size': size,
+    };
   }
 }
 
@@ -62,6 +78,15 @@ class LinearProgressIndicatorParams {
       height: height ?? this.height,
       borderRadius: borderRadius ?? this.borderRadius,
     );
+  }
+
+  Map<String, Object?> toMap() {
+    return {
+      'progressColor': progressColor.toMap(),
+      'trackColor': trackColor.toMap(),
+      'height': height,
+      'value': value,
+    };
   }
 }
 

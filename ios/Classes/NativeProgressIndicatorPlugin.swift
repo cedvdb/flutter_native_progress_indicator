@@ -3,228 +3,202 @@ import UIKit
 import SwiftUI
 
 public class NativeProgressIndicatorPlugin: NSObject, FlutterPlugin {
+    private var circularIndicatorFactory: CircularIndicatorFactory
+    private var linearIndicatorFactory: LinearIndicatorFactory
+    
+    init(_ circularIndicatorFactory: CircularIndicatorFactory, _ linearIndicatorFactory: LinearIndicatorFactory) {
+        self.circularIndicatorFactory = circularIndicatorFactory
+        self.linearIndicatorFactory = linearIndicatorFactory
+    }
+    
     public static func register(with registrar: FlutterPluginRegistrar) {
-        registrar.register(
+        let channel = FlutterMethodChannel(name: "native_progress_indicator", binaryMessenger: registrar.messenger())
+        let instance = NativeProgressIndicatorPlugin(
             CircularIndicatorFactory(messenger: registrar.messenger()),
+            LinearIndicatorFactory(messenger: registrar.messenger())
+        )
+        registrar.addMethodCallDelegate(instance, channel: channel)
+        
+        registrar.register(
+            instance.circularIndicatorFactory,
             withId: "native_progress_indicator/circular")
         registrar.register(
-            LinearIndicatorFactory(messenger: registrar.messenger()),
+            instance.linearIndicatorFactory,
             withId: "native_progress_indicator/linear")
-
     }
-}
-
-
-class CircularIndicatorFactory: NSObject, FlutterPlatformViewFactory {
-    private var messenger: FlutterBinaryMessenger
-
-    init(messenger: FlutterBinaryMessenger) {
-        self.messenger = messenger
-        super.init()
-    }
-
-    func create(
-        withFrame frame: CGRect,
-        viewIdentifier viewId: Int64,
-        arguments args: Any?
-    ) -> FlutterPlatformView {
-        return CircularProgressNativeView(
-            frame: frame,
-            viewIdentifier: viewId,
-            arguments: args,
-            binaryMessenger: messenger)
-    }
-
-    /// Implementing this method is only necessary when the `arguments` in `createWithFrame` is not `nil`.
-    public func createArgsCodec() -> FlutterMessageCodec & NSObjectProtocol {
-          return FlutterStandardMessageCodec.sharedInstance()
-    }
-}
-
-
-class LinearIndicatorFactory: NSObject, FlutterPlatformViewFactory {
-    private var messenger: FlutterBinaryMessenger
-
-    init(messenger: FlutterBinaryMessenger) {
-        self.messenger = messenger
-        super.init()
-    }
-
-    func create(
-        withFrame frame: CGRect,
-        viewIdentifier viewId: Int64,
-        arguments args: Any?
-    ) -> FlutterPlatformView {
-        return LinearProgressNativeView(
-            frame: frame,
-            viewIdentifier: viewId,
-            arguments: args,
-            binaryMessenger: messenger)
-    }
-
-    /// Implementing this method is only necessary when the `arguments` in `createWithFrame` is not `nil`.
-    public func createArgsCodec() -> FlutterMessageCodec & NSObjectProtocol {
-          return FlutterStandardMessageCodec.sharedInstance()
-    }
-}
-
-
-class CircularProgressNativeView: FLNativeView {
     
-    override init(frame: CGRect, viewIdentifier viewId: Int64, arguments args: Any?, binaryMessenger messenger: (any FlutterBinaryMessenger)?) {
-        super.init(frame: frame, viewIdentifier: viewId, arguments: args, binaryMessenger: messenger)
-        var value: Float?
-        var trackColor: Color
-        var progressColor: Color
-        var strokeWidth: Float
-        // Extracting parameters from Flutter arguments,
-        // these are the parameters that are send from the Flutter code, using
-        // "creationParams" parameter.
-        if let params = args as? [String: Any] {
-            let trackColorDictionary: Dictionary<String, Double> = params["trackColor"] as! Dictionary
-            let progressColorDictionary: Dictionary<String, Double> = params["progressColor"] as! Dictionary
-            trackColor = Color(
-                red: trackColorDictionary["r"]!,
-                green: trackColorDictionary["g"]!,
-                blue: trackColorDictionary["b"]!,
-                opacity: trackColorDictionary["a"]!)
-            progressColor = Color(
-                red: progressColorDictionary["r"]!,
-                green: progressColorDictionary["g"]!,
-                blue: progressColorDictionary["b"]!,
-                opacity: progressColorDictionary["a"]!)
-            strokeWidth = (params["strokeWidth"] as? NSNumber)?.floatValue ?? 4
-            value  = (params["value"] as? NSNumber)?.floatValue
-            
-        } else {
-            trackColor = Color(red: 0, green: 0, blue: 0)
-            progressColor = Color(red: 255, green: 255, blue: 255)
-            strokeWidth = 4
-            value = 0.5
+    public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+        guard let args = call.arguments as? [String: Any],
+              let viewId = args["viewId"] as? Int64 else {
+            result(FlutterError(code: "INVALID_ARGUMENTS", message: "Invalid or missing arguments", details: nil))
+            return
         }
-
-        if let valueNonNull = value {
-            createNativeView(
-                view: _view,
-                indicator: DeterminateCircularProgressIndicator(
-                    value: valueNonNull,
-                    trackColor: trackColor,
-                    progressColor: progressColor,
-                    strokeWidth: strokeWidth)
-            )
-        } else {
-            createNativeView(
-                view: _view,
-                indicator: IndeterminateCircularProgressIndicator(
-                    trackColor: trackColor,
-                    progressColor: progressColor,
-                    strokeWidth: strokeWidth)
-            )
+        
+        let params = args["params"] as? [String: Any] ?? [:]
+        
+        switch call.method {
+        case "updateCircularIndicator":
+            circularIndicatorFactory.update(viewId: viewId, params: params)
+        case "updateLinearIndicator":
+            linearIndicatorFactory.update(viewId: viewId, params: params)
+        default:
+            result(FlutterMethodNotImplemented)
         }
-
     }
-}
-
-
-
-class LinearProgressNativeView: FLNativeView {
     
-    override init(frame: CGRect, viewIdentifier viewId: Int64, arguments args: Any?, binaryMessenger messenger: (any FlutterBinaryMessenger)?) {
-        super.init(frame: frame, viewIdentifier: viewId, arguments: args, binaryMessenger: messenger)
-        var value: Float?
-        var trackColor: Color
-        var progressColor: Color
-        var height: Float
-        // Extracting parameters from Flutter arguments,
-        // these are the parameters that are send from the Flutter code, using
-        // "creationParams" parameter.
-        if let params = args as? [String: Any] {
-            let trackColorDictionary: Dictionary<String, Double> = params["trackColor"] as! Dictionary
-            let progressColorDictionary: Dictionary<String, Double> = params["progressColor"] as! Dictionary
-            trackColor = Color(
-                red: trackColorDictionary["r"]!,
-                green: trackColorDictionary["g"]!,
-                blue: trackColorDictionary["b"]!,
-                opacity: trackColorDictionary["a"]!)
-            progressColor = Color(
-                red: progressColorDictionary["r"]!,
-                green: progressColorDictionary["g"]!,
-                blue: progressColorDictionary["b"]!,
-                opacity: progressColorDictionary["a"]!)
-            height = (params["height"] as? NSNumber)?.floatValue ?? 4
-            value  = (params["value"] as? NSNumber)?.floatValue
+    
+    class CircularIndicatorFactory: NSObject, FlutterPlatformViewFactory {
+        private var messenger: FlutterBinaryMessenger
+        private var views: [Int64: CircularProgressNativeView] = [:]
+        
+        init(messenger: FlutterBinaryMessenger) {
+            self.messenger = messenger
+            super.init()
+        }
+        
+        func create(
+            withFrame frame: CGRect,
+            viewIdentifier viewId: Int64,
+            arguments args: Any?
+        ) -> FlutterPlatformView {
+            var view = CircularProgressNativeView(
+                frame: frame,
+                viewIdentifier: viewId,
+                arguments: args,
+                binaryMessenger: messenger)
+            views[viewId] = view
+            return view;
+        }
+        
+        func update(viewId: Int64, params: [String: Any]) {
+            views[viewId]?.updateView(params: params)
+        }
+        
+        /// Implementing this method is only necessary when the `arguments` in `createWithFrame` is not `nil`.
+        public func createArgsCodec() -> FlutterMessageCodec & NSObjectProtocol {
+            return FlutterStandardMessageCodec.sharedInstance()
+        }
+    }
+    
+    
+    class LinearIndicatorFactory: NSObject, FlutterPlatformViewFactory {
+        private var messenger: FlutterBinaryMessenger
+        private var views: [Int64: LinearProgressNativeView] = [:]
+        
+        init(messenger: FlutterBinaryMessenger) {
+            self.messenger = messenger
+            super.init()
+        }
+        
+        func create(
+            withFrame frame: CGRect,
+            viewIdentifier viewId: Int64,
+            arguments args: Any?
+        ) -> FlutterPlatformView {
+            var view = LinearProgressNativeView(
+                frame: frame,
+                viewIdentifier: viewId,
+                arguments: args,
+                binaryMessenger: messenger
+            )
+            views[viewId] = view
+            return view;
+        }
+        
+        func update(viewId: Int64, params: [String: Any]) {
+            views[viewId]?.updateView(params: params)
+        }
+        
+        /// Implementing this method is only necessary when the `arguments` in `createWithFrame` is not `nil`.
+        public func createArgsCodec() -> FlutterMessageCodec & NSObjectProtocol {
+            return FlutterStandardMessageCodec.sharedInstance()
+        }
+    }
+    
+    
+    class CircularProgressNativeView: FLNativeView {
+        let hostingController: UIHostingController<AnyView>
+        
+        override init(frame: CGRect, viewIdentifier viewId: Int64, arguments args: Any?, binaryMessenger messenger: (any FlutterBinaryMessenger)?) {
+            let indicator: CircularProgressIndicator
+            if let args = args as? [String: Any] {
+                indicator = CircularProgressIndicator(params: args)
+            } else {
+                indicator = CircularProgressIndicator(params: [:])
+            }
+            hostingController = UIHostingController(rootView: AnyView(indicator))
+            super.init(frame: frame, viewIdentifier: viewId, arguments: args, binaryMessenger: messenger)
+            configureController(view: _view, hostingController: hostingController)
+        }
+        
+        
+        func updateView(params: [String: Any]) {
+            let indicator = CircularProgressIndicator(params: params)
+            hostingController.rootView = AnyView(indicator)
+        }
+    }
+    
+    
+    
+    class LinearProgressNativeView: FLNativeView {
+        let hostingController: UIHostingController<AnyView>
+        
+        override init(frame: CGRect, viewIdentifier viewId: Int64, arguments args: Any?, binaryMessenger messenger: (any FlutterBinaryMessenger)?) {
+            let indicator: LinearProgressIndicator
+            if let args = args as? [String: Any] {
+                indicator = LinearProgressIndicator(params: args)
+            } else {
+                indicator = LinearProgressIndicator(params: [:])
+            }
+            hostingController = UIHostingController(rootView: AnyView(indicator))
+            super.init(frame: frame, viewIdentifier: viewId, arguments: args, binaryMessenger: messenger)
+            configureController(view: _view, hostingController: hostingController)
+        }
+        
+        func updateView(params: [String: Any]) {
+            let indicator = LinearProgressIndicator(params: params)
+            hostingController.rootView = AnyView(indicator)
+        }
+    }
+    
+    class FLNativeView: NSObject, FlutterPlatformView {
+        var _view: UIView
+        
+        init(
+            frame: CGRect,
+            viewIdentifier viewId: Int64,
+            arguments args: Any?,
+            binaryMessenger messenger: FlutterBinaryMessenger?
+        ) {
+            _view = UIView()
+            super.init()
+        }
+        
+        func view() -> UIView {
+            return _view
+        }
+        
+        func configureController(view _view: UIView, hostingController: UIHostingController<AnyView>){
+            _view.backgroundColor = UIColor(white: 0, alpha: 0)
+            let keyWindows = UIApplication.shared.windows.first(where: { $0.isKeyWindow}) ?? UIApplication.shared.windows.first
+            let topController = keyWindows?.rootViewController
             
-        } else {
-            trackColor = Color(red: 0, green: 0, blue: 0)
-            progressColor = Color(red: 255, green: 255, blue: 255)
-            height = 4
-            value = 0.5
+            let swiftUiView = hostingController.view!
+            swiftUiView.backgroundColor = UIColor(white: 0, alpha: 0)
+            swiftUiView.translatesAutoresizingMaskIntoConstraints = false
+            
+            topController?.addChild(hostingController)
+            _view.addSubview(swiftUiView)
+            
+            NSLayoutConstraint.activate(
+                [
+                    swiftUiView.leadingAnchor.constraint(equalTo: _view.leadingAnchor),
+                    swiftUiView.trailingAnchor.constraint(equalTo: _view.trailingAnchor),
+                    swiftUiView.topAnchor.constraint(equalTo: _view.topAnchor),
+                    swiftUiView.bottomAnchor.constraint(equalTo:  _view.bottomAnchor)
+                ])
+            
+            hostingController.didMove(toParent: topController)
         }
-
-        if let valueNonNull = value {
-            createNativeView(
-                view: _view,
-                indicator: DeterminateLinearProgressIndicator(
-                    value: valueNonNull,
-                    trackColor: trackColor,
-                    progressColor: progressColor,
-                    height: height)
-            )
-        } else {
-            createNativeView(
-                view: _view,
-                indicator: IndeterminateLinearProgressIndicator(
-                    trackColor: trackColor,
-                    progressColor: progressColor,
-                    height: height)
-            )
-        }
-
     }
 }
-
-class FLNativeView: NSObject, FlutterPlatformView {
-    var _view: UIView
-
-    init(
-        frame: CGRect,
-        viewIdentifier viewId: Int64,
-        arguments args: Any?,
-        binaryMessenger messenger: FlutterBinaryMessenger?
-    ) {
-        _view = UIView()
-        super.init()
-    }
-
-    func view() -> UIView {
-        return _view
-    }
-
-    func createNativeView(view _view: UIView, indicator: some View){
-        _view.backgroundColor = UIColor(white: 0, alpha: 0)
-
-        let keyWindows = UIApplication.shared.windows.first(where: { $0.isKeyWindow}) ?? UIApplication.shared.windows.first
-        let topController = keyWindows?.rootViewController
-        
-        let vc = UIHostingController(
-            rootView: indicator)
-        let swiftUiView = vc.view!
-        swiftUiView.backgroundColor = UIColor(white: 0, alpha: 0)
-        swiftUiView.translatesAutoresizingMaskIntoConstraints = false
-        
-        topController?.addChild(vc)
-        _view.addSubview(swiftUiView)
-        
-        NSLayoutConstraint.activate(
-            [
-                swiftUiView.leadingAnchor.constraint(equalTo: _view.leadingAnchor),
-                swiftUiView.trailingAnchor.constraint(equalTo: _view.trailingAnchor),
-                swiftUiView.topAnchor.constraint(equalTo: _view.topAnchor),
-                swiftUiView.bottomAnchor.constraint(equalTo:  _view.bottomAnchor)
-            ])
-        
-        vc.didMove(toParent: topController)
-    }
-}
-
-
