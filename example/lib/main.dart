@@ -38,14 +38,14 @@ class _MyAppState extends State<MyApp> {
                             Text('Flutter'),
                             CircularProgressIndicator(),
                             CircularProgressIndicator(
-                              value: 0.5,
+                              value: progress,
                               backgroundColor: Theme.of(context)
                                   .colorScheme
                                   .secondaryContainer,
                             ),
                             LinearProgressIndicator(),
                             LinearProgressIndicator(
-                              value: 0.7,
+                              value: progress,
                             ),
                           ],
                         ),
@@ -58,14 +58,14 @@ class _MyAppState extends State<MyApp> {
                             Text('Native'),
                             NativeCircularProgressIndicator(),
                             NativeCircularProgressIndicator(
-                              value: 0.5,
+                              value: progress,
                               backgroundColor: Theme.of(context)
                                   .colorScheme
                                   .secondaryContainer,
                             ),
                             NativeLinearProgressIndicator(),
                             NativeLinearProgressIndicator(
-                              value: 0.7,
+                              value: progress,
                             ),
                           ],
                         ),

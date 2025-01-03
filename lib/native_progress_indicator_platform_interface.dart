@@ -14,6 +14,7 @@ abstract class NativeProgressIndicatorPlatform extends PlatformInterface {
     required Color trackColor,
     required double strokeWidth,
     required double size,
+    required Function(int viewId) onPlatformViewCreated,
   }) {
     throw UnimplementedError(
         'buildIndeterminateCircularProgressIndicator() has not been implemented.');
@@ -25,6 +26,7 @@ abstract class NativeProgressIndicatorPlatform extends PlatformInterface {
     required double strokeWidth,
     required double value,
     required double size,
+    required Function(int viewId) onPlatformViewCreated,
   }) {
     throw UnimplementedError(
         'buildDeterminateCircularProgressIndicator() has not been implemented.');
@@ -35,6 +37,7 @@ abstract class NativeProgressIndicatorPlatform extends PlatformInterface {
     required Color trackColor,
     required double height,
     required BorderRadius borderRadius,
+    required Function(int viewId) onPlatformViewCreated,
   }) {
     throw UnimplementedError(
         'buildIndeterminateCircularProgressIndicator() has not been implemented.');
@@ -46,6 +49,7 @@ abstract class NativeProgressIndicatorPlatform extends PlatformInterface {
     required double height,
     required BorderRadius borderRadius,
     required double value,
+    required Function(int viewId) onPlatformViewCreated,
   }) {
     throw UnimplementedError(
         'buildIndeterminateCircularProgressIndicator() has not been implemented.');

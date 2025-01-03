@@ -25,6 +25,7 @@ class NativeProgressIndicatorWeb extends NativeProgressIndicatorPlatform {
     required Color trackColor,
     required double strokeWidth,
     required double size,
+    required Function(int viewId) onPlatformViewCreated,
   }) =>
       _CircularProgressIndicatorBuilder().indeterminate(
         color: progressColor,
@@ -40,6 +41,7 @@ class NativeProgressIndicatorWeb extends NativeProgressIndicatorPlatform {
     required double strokeWidth,
     required double value,
     required double size,
+    required Function(int viewId) onPlatformViewCreated,
   }) =>
       _CircularProgressIndicatorBuilder().determinate(
         color: progressColor,
@@ -55,6 +57,7 @@ class NativeProgressIndicatorWeb extends NativeProgressIndicatorPlatform {
     required Color trackColor,
     required double height,
     required BorderRadius borderRadius,
+    required Function(int viewId) onPlatformViewCreated,
   }) =>
       _LinearProgressIndicatorBuilder().indeterminate(
         color: progressColor,
@@ -70,6 +73,7 @@ class NativeProgressIndicatorWeb extends NativeProgressIndicatorPlatform {
     required double height,
     required BorderRadius borderRadius,
     required double value,
+    required Function(int viewId) onPlatformViewCreated,
   }) =>
       _LinearProgressIndicatorBuilder().determinate(
         color: progressColor,

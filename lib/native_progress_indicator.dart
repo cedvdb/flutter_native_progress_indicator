@@ -4,7 +4,7 @@ import 'package:native_progress_indicator/native_progress_indicator_platform_int
 export 'native_progress_indicator_ios.dart';
 export 'native_progress_indicator_android.dart';
 
-class NativeCircularProgressIndicator extends StatelessWidget {
+class NativeCircularProgressIndicator extends StatefulWidget {
   final double? value;
   final Color? color;
   final Color? backgroundColor;
@@ -23,16 +23,25 @@ class NativeCircularProgressIndicator extends StatelessWidget {
   });
 
   @override
+  State<NativeCircularProgressIndicator> createState() =>
+      _NativeCircularProgressIndicatorState();
+}
+
+class _NativeCircularProgressIndicatorState
+    extends State<NativeCircularProgressIndicator> {
+  int? _viewId;
+
+  @override
   Widget build(BuildContext context) {
-    final value = this.value;
-    final color = this.color ?? Theme.of(context).primaryColor;
-    final trackColor = backgroundColor ??
+    final value = widget.value;
+    final color = widget.color ?? Theme.of(context).primaryColor;
+    final trackColor = widget.backgroundColor ??
         ProgressIndicatorTheme.of(context).circularTrackColor ??
         (Colors.transparent);
     return _buildSemanticsWrapper(
       context: context,
-      semanticsLabel: semanticsLabel,
-      semanticsValue: semanticsValue,
+      semanticsLabel: widget.semanticsLabel,
+      semanticsValue: widget.semanticsValue,
       value: value,
       child: SizedBox(
         height: 36,
@@ -41,18 +50,19 @@ class NativeCircularProgressIndicator extends StatelessWidget {
           builder: (context, constraints) => value == null
               ? NativeProgressIndicatorPlatform.instance
                   .buildIndeterminateCircularProgressIndicator(
-                  progressColor: color,
-                  trackColor: trackColor,
-                  strokeWidth: strokeWidth,
-                  size: constraints.maxWidth,
-                )
+                      progressColor: color,
+                      trackColor: trackColor,
+                      strokeWidth: widget.strokeWidth,
+                      size: constraints.maxWidth,
+                      onPlatformViewCreated: (viewId) => _viewId = viewId)
               : NativeProgressIndicatorPlatform.instance
                   .buildDeterminateCircularProgressIndicator(
                   progressColor: color,
                   trackColor: trackColor,
-                  strokeWidth: strokeWidth,
+                  strokeWidth: widget.strokeWidth,
                   value: value,
                   size: constraints.maxWidth,
+                  onPlatformViewCreated: (viewId) => _viewId = viewId,
                 ),
         ),
       ),
@@ -60,7 +70,7 @@ class NativeCircularProgressIndicator extends StatelessWidget {
   }
 }
 
-class NativeLinearProgressIndicator extends StatelessWidget {
+class NativeLinearProgressIndicator extends StatefulWidget {
   final double? value;
   final Color? color;
   final Color? backgroundColor;
@@ -81,19 +91,28 @@ class NativeLinearProgressIndicator extends StatelessWidget {
   }) : assert(minHeight == null || minHeight > 0);
 
   @override
+  State<NativeLinearProgressIndicator> createState() =>
+      _NativeLinearProgressIndicatorState();
+}
+
+class _NativeLinearProgressIndicatorState
+    extends State<NativeLinearProgressIndicator> {
+  int? _viewId;
+
+  @override
   Widget build(BuildContext context) {
-    final height = minHeight ??
+    final height = widget.minHeight ??
         Theme.of(context).progressIndicatorTheme.linearMinHeight ??
         4;
-    final value = this.value;
-    final color = this.color ?? Theme.of(context).primaryColor;
-    final trackColor = backgroundColor ??
+    final value = widget.value;
+    final color = widget.color ?? Theme.of(context).primaryColor;
+    final trackColor = widget.backgroundColor ??
         Theme.of(context).progressIndicatorTheme.linearTrackColor ??
         Theme.of(context).colorScheme.secondaryContainer;
     return _buildSemanticsWrapper(
       context: context,
-      semanticsLabel: semanticsLabel,
-      semanticsValue: semanticsValue,
+      semanticsLabel: widget.semanticsLabel,
+      semanticsValue: widget.semanticsValue,
       value: value,
       child: SizedBox(
         height: height,
@@ -103,18 +122,22 @@ class NativeLinearProgressIndicator extends StatelessWidget {
                   .buildIndeterminateLinearProgressIndicator(
                   progressColor: color,
                   trackColor: trackColor,
-                  borderRadius: borderRadius?.resolve(TextDirection.ltr) ??
-                      BorderRadius.zero,
+                  borderRadius:
+                      widget.borderRadius?.resolve(TextDirection.ltr) ??
+                          BorderRadius.zero,
                   height: height,
+                  onPlatformViewCreated: (viewId) => _viewId = viewId,
                 )
               : NativeProgressIndicatorPlatform.instance
                   .buildDeterminateLinearProgressIndicator(
                   progressColor: color,
                   trackColor: trackColor,
-                  borderRadius: borderRadius?.resolve(TextDirection.ltr) ??
-                      BorderRadius.zero,
+                  borderRadius:
+                      widget.borderRadius?.resolve(TextDirection.ltr) ??
+                          BorderRadius.zero,
                   height: height,
                   value: value,
+                  onPlatformViewCreated: (viewId) => _viewId = viewId,
                 ),
         ),
       ),

@@ -5,67 +5,83 @@ import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding
 import android.content.Context
 import io.flutter.plugin.common.StandardMessageCodec
-import io.flutter.plugin.platform.PlatformView
 import io.flutter.plugin.platform.PlatformViewFactory
-import android.view.View
-import android.widget.ProgressBar
+import io.flutter.plugin.common.MethodCall
+import io.flutter.plugin.common.MethodChannel
+import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 
 /** TestPlugin */
 
-class NativeProgressIndicatorPlugin : FlutterPlugin {
+class NativeProgressIndicatorPlugin : FlutterPlugin, MethodCallHandler {
+    val _factory = NativeViewFactory();
+
     override fun onAttachedToEngine(binding: FlutterPluginBinding) {
         binding
             .platformViewRegistry
-            .registerViewFactory("native_progress_indicator/indeterminate_circular_progress_indicator", CircularIndicatorNativeViewFactory())
+            .registerViewFactory(
+                "native_progress_indicator/indeterminate_circular_progress_indicator",
+                _factory)
 
         binding
             .platformViewRegistry
-            .registerViewFactory("native_progress_indicator/determinate_circular_progress_indicator", CircularIndicatorNativeViewFactory())
+            .registerViewFactory(
+                "native_progress_indicator/determinate_circular_progress_indicator",
+                _factory)
 
         binding
             .platformViewRegistry
-            .registerViewFactory("native_progress_indicator/indeterminate_linear_progress_indicator", LinearIndicatorNativeViewFactory())
+            .registerViewFactory(
+                "native_progress_indicator/indeterminate_linear_progress_indicator",
+                _factory)
 
         binding
             .platformViewRegistry
-            .registerViewFactory("native_progress_indicator/determinate_linear_progress_indicator", LinearIndicatorNativeViewFactory())
+            .registerViewFactory(
+                "native_progress_indicator/determinate_linear_progress_indicator",
+                _factory)
     }
 
     override fun onDetachedFromEngine(binding: FlutterPluginBinding) {}
-}
 
-class CircularIndicatorNativeViewFactory : PlatformViewFactory(StandardMessageCodec.INSTANCE) {
-    override fun create(context: Context, viewId: Int, args: Any?): PlatformView {
-        val creationParams = args as Map<String?, Any?>?
-        return CircularIndicatorNativeView(context, viewId, creationParams)
+    override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
+        when (call.method) {
+            "updateParams" -> {
+                val viewId = call.argument<Int>("viewId") ?: -1
+                val params = call.argument<Map<String?, Any?>>("params")
+                _factory.updateView(viewId, params)
+            }
+
+            else -> result.notImplemented()
+    }
     }
 }
 
-class LinearIndicatorNativeViewFactory : PlatformViewFactory(StandardMessageCodec.INSTANCE) {
-    override fun create(context: Context, viewId: Int, args: Any?): PlatformView {
-        val creationParams = args as Map<String?, Any?>?
-        return LinearIndicatorNativeView(context, viewId, creationParams)
-    }
+enum class IndicatorType {
+    Circular,
+    Linear
 }
 
-internal class CircularIndicatorNativeView(context: Context, id: Int, creationParams: Map<String?, Any?>?) : PlatformView {
-    private val indicator: View = nativeCircularProgressIndicator(context, creationParams ?: mapOf())
+class NativeViewFactory() : PlatformViewFactory(StandardMessageCodec.INSTANCE) {
+    private val platformViews = mutableMapOf<Int, IndicatorPlatformView>()
 
-    override fun getView(): View {
-        return indicator
+    override fun create(context: Context, id: Int, args: Any?): IndicatorPlatformView {
+        val type = (args as Map<String?, Any?>)["type"] as String;
+
+        val platformView = when(type) {
+            "circular" -> NativeCircularProgressIndicator(context, args as Map<String?, Any?>)
+            "linear" -> NativeLinearProgressIndicator(context, args as Map<String?, Any?>)
+            else -> throw UnsupportedOperationException()
+        }
+        platformViews[id] = platformView
+        return platformView
     }
 
-    override fun dispose() {}
-}
-
-internal class LinearIndicatorNativeView(context: Context, id: Int, creationParams: Map<String?, Any?>?) : PlatformView {
-    private val indicator: View = nativeLinearProgressIndicator(context, creationParams ?: mapOf())
-
-    override fun getView(): View {
-        return indicator
+    internal fun updateView(id: Int, args: Any?) {
+        val view = platformViews[id]
+        view?.updateView(args as Map<String?, Any?>)
     }
 
-    override fun dispose() {}
+    internal fun getPlatformView(id: Int): IndicatorPlatformView? {
+        return platformViews[id]
+    }
 }
-
-
