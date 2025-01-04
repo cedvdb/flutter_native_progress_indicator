@@ -35,6 +35,7 @@ class _NativeCircularProgressIndicatorState
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    print('did change deps');
     final value = widget.value;
     final progressColor = widget.color ?? Theme.of(context).primaryColor;
     final trackColor = widget.backgroundColor ??
@@ -52,6 +53,7 @@ class _NativeCircularProgressIndicatorState
   @override
   void didUpdateWidget(covariant NativeCircularProgressIndicator oldWidget) {
     final viewId = _viewId;
+    print('did update $viewId');
     if (viewId != null) {
       final value = widget.value;
       final progressColor = widget.color ?? Theme.of(context).primaryColor;

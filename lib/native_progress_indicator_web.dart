@@ -15,12 +15,9 @@ class NativeProgressIndicatorWeb implements NativeProgressIndicatorPlatform {
   /// Constructs a FlutterNativeSpinnerWeb
   NativeProgressIndicatorWeb();
 
-  // bypassing viewId from flutter as we want something synchronous
-  static int _viewId = 0;
-  static int generateViewId() => _viewId++;
-
-  static Map<int, _CircularProgressIndicatorBuilder> _circularIndicators = {};
-  static Map<int, _LinearProgressIndicatorBuilder> _linearIndicators = {};
+  static final Map<int, _CircularProgressIndicatorFactory> _circularIndicators =
+      {};
+  static final Map<int, _LinearProgressIndicatorFactory> _linearIndicators = {};
 
   static void registerWith(Registrar registrar) {
     NativeProgressIndicatorPlatform.instance = NativeProgressIndicatorWeb();
@@ -31,17 +28,13 @@ class NativeProgressIndicatorWeb implements NativeProgressIndicatorPlatform {
     required CircularProgressIndicatorParams params,
     required Function(int viewId) onPlatformViewCreated,
   }) {
-    final viewId = generateViewId();
-    final view = _CircularProgressIndicatorBuilder(viewId).build(
-      value: params.value,
-      color: params.progressColor,
-      strokeWidth: params.strokeWidth,
-      trackColor: params.trackColor,
-      size: params.size,
-    );
-    ui_web.platformViewRegistry.registerViewFactory(
-      'native_progress_indicator/circular',
-      (int viewId) => view,
+    final builder = _CircularProgressIndicatorFactory();
+    final view = builder.build(
+      params: params,
+      onCreated: (viewId) {
+        _circularIndicators[viewId] = builder;
+        onPlatformViewCreated(viewId);
+      },
     );
     return view;
   }
@@ -51,84 +44,104 @@ class NativeProgressIndicatorWeb implements NativeProgressIndicatorPlatform {
     required LinearProgressIndicatorParams params,
     required Function(int viewId) onPlatformViewCreated,
   }) {
-    final viewId = generateViewId();
-    final builder = _LinearProgressIndicatorBuilder(viewId);
-    final view = _LinearProgressIndicatorBuilder(viewId).build(
-      value: params.value,
-      color: params.progressColor,
-      trackColor: params.trackColor,
-      borderRadius: params.borderRadius,
-      height: params.height,
-    );
-    ui_web.platformViewRegistry.registerViewFactory(
-      'native_progress_indicator/linear',
-      (int viewId) {
-        builder.se
-        return view;
+    final builder = _LinearProgressIndicatorFactory();
+    final view = builder.build(
+      params: params,
+      onCreated: (viewId) {
+        _linearIndicators[viewId] = builder;
+        onPlatformViewCreated(viewId);
       },
     );
+
     return view;
   }
 
   @override
-  void updateCircularIndicator(
-      {required CircularProgressIndicatorParams params, required int viewId}) {
-    // TODO: implement updateCircularIndicator
+  void updateCircularIndicator({
+    required CircularProgressIndicatorParams params,
+    required int viewId,
+  }) {
+    print('updating $viewId');
+    // _circularIndicators[viewId]?.setContent(
+    //   params: params,
+    //   viewId: viewId,
+    // );
   }
 
   @override
-  void updateLinearIndicator(
-      {required LinearProgressIndicatorParams params, required int viewId}) {
-    // TODO: implement updateLinearIndicator
+  void updateLinearIndicator({
+    required LinearProgressIndicatorParams params,
+    required int viewId,
+  }) {
+    print('updating $viewId');
+
+    _linearIndicators[viewId]?.setContent(
+      params: params,
+      viewId: viewId,
+    );
   }
 }
 
-class _CircularProgressIndicatorBuilder {
-  late web.HTMLDivElement _div;
-  final int _viewId;
+class _CircularProgressIndicatorFactory {
+  static const String _id = 'circular-progress-indicator';
+  web.HTMLDivElement? _div;
 
-  _CircularProgressIndicatorBuilder(this._viewId);
+  _CircularProgressIndicatorFactory() {
+    ui_web.platformViewRegistry.registerViewFactory(_id, (int viewId,
+        {Object? params}) {
+      final paramsParsed = CircularProgressIndicatorParams.fromMap(
+          (params as Map).cast<String, dynamic>());
+      final div = web.HTMLDivElement()
+        ..style.width = '100%'
+        ..style.height = '100%'
+        ..className = 'circular-progress-indicator-$viewId';
+      _div = div;
+      setContent(
+        params: paramsParsed,
+        viewId: viewId,
+      );
+      return div;
+    });
+  }
 
   HtmlElementView build({
-    required double? value,
-    required Color color,
-    required Color trackColor,
-    required double strokeWidth,
-    required double size,
+    required CircularProgressIndicatorParams params,
+    required Function(int viewId) onCreated,
   }) {
-    return HtmlElementView.fromTagName(
-      tagName: 'div',
-      onElementCreated: (Object div) {
-        _div = div as web.HTMLDivElement;
-        setContent(
-            value: value,
-            color: color,
-            trackColor: trackColor,
-            strokeWidth: strokeWidth,
-            size: size);
-      },
+    return HtmlElementView(
+      viewType: _id,
+      creationParams: params.toMap(),
+      onPlatformViewCreated: onCreated,
     );
   }
 
   void setContent({
-    required double? value,
-    required Color color,
-    required Color trackColor,
-    required double strokeWidth,
-    required double size,
+    required CircularProgressIndicatorParams params,
+    required int viewId,
   }) {
-    value != null
-        ? _setContentDeterminate(
-            value: value,
-            color: color,
-            trackColor: trackColor,
-            strokeWidth: strokeWidth,
-            size: size)
-        : _setContentIndeterminate(
-            color: color,
-            trackColor: trackColor,
-            strokeWidth: strokeWidth,
-            size: size);
+    print('setting content circular view id: $viewId ');
+    final value = params.value;
+    final color = params.progressColor;
+    final trackColor = params.trackColor;
+    final size = params.size;
+    final strokeWidth = params.strokeWidth;
+
+    if (value != null) {
+      _setContentDeterminate(
+          value: value,
+          color: color,
+          trackColor: trackColor,
+          strokeWidth: strokeWidth,
+          size: size,
+          viewId: viewId);
+    } else {
+      _setContentIndeterminate(
+          color: color,
+          trackColor: trackColor,
+          strokeWidth: strokeWidth,
+          size: size,
+          viewId: viewId);
+    }
   }
 
   void _setContentIndeterminate({
@@ -136,12 +149,12 @@ class _CircularProgressIndicatorBuilder {
     required Color trackColor,
     required double strokeWidth,
     required double size,
+    required int viewId,
   }) {
-    _div.style.width = '100%';
-    _div.style.height = '100%';
-    _div.className = 'circular-progress-indicator-$_viewId';
-    _div.innerHTML = '''
-        ${_generateCss(strokeWidth: strokeWidth, color: color, trackColor: trackColor, size: size)}
+    print('setting content indeterminate $viewId');
+
+    _div?.innerHTML = '''
+        ${_generateCss(strokeWidth: strokeWidth, color: color, trackColor: trackColor, size: size, viewId: viewId)}
         <div class="progress indeterminate">
           <div class="spinner">
             <div class="left">
@@ -161,14 +174,12 @@ class _CircularProgressIndicatorBuilder {
     required Color trackColor,
     required double strokeWidth,
     required double size,
+    required int viewId,
   }) {
+    print('setting content determinate $viewId');
     final dashOffset = (1 - value) * 100;
-
-    _div.style.width = '100%';
-    _div.style.height = '100%';
-    _div.className = 'circular-progress-indicator-$_viewId';
-    _div.innerHTML = '''
-      ${_generateCss(strokeWidth: strokeWidth, color: color, trackColor: trackColor, size: size)}
+    _div?.innerHTML = '''
+      ${_generateCss(strokeWidth: strokeWidth, color: color, trackColor: trackColor, size: size, viewId: viewId)}
       <div class="progress">
         <svg viewBox="0 0 4800 4800">
           <circle class="track" pathLength="100"></circle>
@@ -187,7 +198,9 @@ class _CircularProgressIndicatorBuilder {
     required Color color,
     required Color trackColor,
     required double size,
+    required int viewId,
   }) {
+    print('generating css for $viewId');
     final arcDuration = Duration(milliseconds: 1333);
     final linearRotateDuration =
         Duration(milliseconds: (1333 * 360 / 306).toInt());
@@ -201,7 +214,7 @@ class _CircularProgressIndicatorBuilder {
     return '''
 <style>
 
-.circular-progress-indicator-$_viewId {
+.circular-progress-indicator-$viewId {
   display: inline-flex;
   vertical-align: middle;
   width: 100%;
@@ -214,28 +227,28 @@ class _CircularProgressIndicatorBuilder {
 }
 
 
-.circular-progress-indicator-$_viewId .progress {
+.circular-progress-indicator-$viewId .progress {
   flex: 1;
   align-self: stretch;
 }
 
-.circular-progress-indicator-$_viewId .progress,
-.circular-progress-indicator-$_viewId .spinner,
-.circular-progress-indicator-$_viewId .left,
-.circular-progress-indicator-$_viewId .right,
-.circular-progress-indicator-$_viewId .circle,
-.circular-progress-indicator-$_viewId svg,
-.circular-progress-indicator-$_viewId .track,
-.circular-progress-indicator-$_viewId .active-track{
+.circular-progress-indicator-$viewId .progress,
+.circular-progress-indicator-$viewId .spinner,
+.circular-progress-indicator-$viewId .left,
+.circular-progress-indicator-$viewId .right,
+.circular-progress-indicator-$viewId .circle,
+.circular-progress-indicator-$viewId svg,
+.circular-progress-indicator-$viewId .track,
+.circular-progress-indicator-$viewId .active-track{
   position: absolute;
   inset: 0;
 }
 
-.circular-progress-indicator-$_viewId svg {
+.circular-progress-indicator-$viewId svg {
   transform: rotate(-90deg);
 }
 
-.circular-progress-indicator-$_viewId circle {
+.circular-progress-indicator-$viewId circle {
   cx: 50%;
   cy: 50%;
   r: calc(50% * (1 - $strokeWidth / $size));
@@ -244,37 +257,37 @@ class _CircularProgressIndicatorBuilder {
   fill: transparent;
 }
 
-.circular-progress-indicator-$_viewId .active-track {
+.circular-progress-indicator-$viewId .active-track {
   transition: stroke-dashoffset 500ms cubic-bezier(0, 0, 0.2, 1);
   stroke: $rgbColor;
 }
 
-.circular-progress-indicator-$_viewId .track {
+.circular-progress-indicator-$viewId .track {
   stroke: $rgbTrackColor;
 }
 
-.circular-progress-indicator-$_viewId .progress.indeterminate {
+.circular-progress-indicator-$viewId .progress.indeterminate {
   animation: linear infinite linear-rotate;
   animation-duration: ${linearRotateDuration.inMilliseconds}ms;
 }
 
-.circular-progress-indicator-$_viewId .spinner {
+.circular-progress-indicator-$viewId .spinner {
   animation: infinite both rotate-arc;
   animation-duration: ${cycleDuration.inMilliseconds}ms;
   animation-timing-function: $indeterminateEasing;
 }
 
-.circular-progress-indicator-$_viewId .left {
+.circular-progress-indicator-$viewId .left {
   overflow: hidden;
   inset: 0 50% 0 0;
 }
 
-.circular-progress-indicator-$_viewId .right {
+.circular-progress-indicator-$viewId .right {
   overflow: hidden;
   inset: 0 0 0 50%;
 }
 
-.circular-progress-indicator-$_viewId .circle {
+.circular-progress-indicator-$viewId .circle {
   box-sizing: border-box;
   border-radius: 50%;
   border: solid ${strokeWidth}px;
@@ -286,22 +299,22 @@ class _CircularProgressIndicatorBuilder {
   animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.circular-progress-indicator-$_viewId .left .circle {
+.circular-progress-indicator-$viewId .left .circle {
   rotate: 135deg;
   inset: 0 -100% 0 0;
 }
-.circular-progress-indicator-$_viewId .right .circle {
+.circular-progress-indicator-$viewId .right .circle {
   rotate: 100deg;
   inset: 0 0 0 -100%;
   animation-delay: calc(-0.5 * ${arcDuration.inMilliseconds}ms), 0ms;
 }
 
 @media (forced-colors: active) {
-  .circular-progress-indicator-$_viewId .active-track {
+  .circular-progress-indicator-$viewId .active-track {
     stroke: CanvasText;
   }
 
-  .circular-progress-indicator-$_viewId .circle {
+  .circular-progress-indicator-$viewId .circle {
     border-color: CanvasText CanvasText Canvas Canvas;
   }
 }
@@ -357,52 +370,66 @@ class _CircularProgressIndicatorBuilder {
   }
 }
 
-class _LinearProgressIndicatorBuilder {
-  late web.HTMLDivElement _div;
-  final int _viewId;
+class _LinearProgressIndicatorFactory {
+  static const String _id = 'linear-progress-indicator';
+  web.HTMLDivElement? _div;
 
-  _LinearProgressIndicatorBuilder(this._viewId);
+  _LinearProgressIndicatorFactory() {
+    ui_web.platformViewRegistry.registerViewFactory(_id, (int viewId,
+        {Object? params}) {
+      final paramsParsed = LinearProgressIndicatorParams.fromMap(
+          (params as Map).cast<String, dynamic>());
+      final div = web.HTMLDivElement()
+        ..style.width = '100%'
+        ..style.height = '100%'
+        ..className = 'linear-progress-indicator-$viewId';
+      _div = div;
+      setContent(
+        params: paramsParsed,
+        viewId: viewId,
+      );
+      return div;
+    });
+  }
 
   HtmlElementView build({
-    required double? value,
-    required Color color,
-    required Color trackColor,
-    required double height,
-    required BorderRadius borderRadius,
+    required LinearProgressIndicatorParams params,
+    required Function(int viewId) onCreated,
   }) {
-    return HtmlElementView.fromTagName(
-      tagName: 'div',
-      onElementCreated: (Object div) {
-        _div = div as web.HTMLDivElement;
-        setContent(
-            value: value,
-            color: color,
-            trackColor: trackColor,
-            height: height,
-            borderRadius: borderRadius);
-      },
+    return HtmlElementView(
+      viewType: _id,
+      creationParams: params.toMap(),
+      onPlatformViewCreated: onCreated,
     );
   }
 
   void setContent({
-    required double? value,
-    required Color color,
-    required Color trackColor,
-    required double height,
-    required BorderRadius borderRadius,
+    required LinearProgressIndicatorParams params,
+    required int viewId,
   }) {
+    print('setting content linear view id: $viewId ');
+
+    final value = params.value;
+    final color = params.progressColor;
+    final trackColor = params.trackColor;
+    final height = params.height;
+    final borderRadius = params.borderRadius;
     value != null
         ? _setContentDeterminate(
             color: color,
             trackColor: trackColor,
             height: height,
             borderRadius: borderRadius,
-            value: value)
+            value: value,
+            viewId: viewId,
+          )
         : _setContentIndeterminate(
             color: color,
             trackColor: trackColor,
             height: height,
-            borderRadius: borderRadius);
+            borderRadius: borderRadius,
+            viewId: viewId,
+          );
   }
 
   void _setContentIndeterminate({
@@ -410,16 +437,15 @@ class _LinearProgressIndicatorBuilder {
     required Color trackColor,
     required double height,
     required BorderRadius borderRadius,
+    required int viewId,
   }) {
-    _div.style.width = '100%';
-    _div.style.height = '100%';
-    _div.className = 'linear-progress-indicator-$_viewId';
-    _div.innerHTML = '''
+    _div?.innerHTML = '''
       ${_generateCss(
       color: color,
       trackColor: trackColor,
       borderRadius: borderRadius,
       height: height,
+      viewId: viewId,
     )}
       <div class="progress indeterminate">
         <div class="dots" ?hidden="true"></div>
@@ -440,19 +466,11 @@ class _LinearProgressIndicatorBuilder {
     required double height,
     required BorderRadius borderRadius,
     required double value,
+    required int viewId,
   }) {
     final progress = value * 100;
-
-    _div.style.width = '100%';
-    _div.style.height = '100%';
-    _div.className = 'linear-progress-indicator-$_viewId';
-    _div.innerHTML = '''
-    ${_generateCss(
-      color: color,
-      trackColor: trackColor,
-      borderRadius: borderRadius,
-      height: height,
-    )}
+    _div?.innerHTML = '''
+    ${_generateCss(color: color, trackColor: trackColor, borderRadius: borderRadius, height: height, viewId: viewId)}
     <div class="progress">
       <div class="dots" ?hidden="true"></div>
       <div class="bar primary-bar" style="transform: scaleX($progress%)">
@@ -470,6 +488,7 @@ class _LinearProgressIndicatorBuilder {
     required Color trackColor,
     required double height,
     required BorderRadius borderRadius,
+    required int viewId,
   }) {
     final rgbColor =
         'rgb(${color.r * 255}, ${color.g * 255}, ${color.b * 255}, ${color.a})';
@@ -486,7 +505,7 @@ class _LinearProgressIndicatorBuilder {
 
     return '''
 <style>
-.linear-progress-indicator-$_viewId {
+.linear-progress-indicator-$viewId {
   border-radius: ${borderRadius.topLeft}px ${borderRadius.topRight}px ${borderRadius.bottomRight}px ${borderRadius.bottomLeft}px;
   display: flex;
   position: relative;
@@ -497,15 +516,15 @@ class _LinearProgressIndicatorBuilder {
   contain: strict;
 }
 
-.linear-progress-indicator-$_viewId .progress,
-.linear-progress-indicator-$_viewId .dots,
-.linear-progress-indicator-$_viewId .inactive-track,
-.linear-progress-indicator-$_viewId .bar,
-.linear-progress-indicator-$_viewId .bar-inner {
+.linear-progress-indicator-$viewId .progress,
+.linear-progress-indicator-$viewId .dots,
+.linear-progress-indicator-$viewId .inactive-track,
+.linear-progress-indicator-$viewId .bar,
+.linear-progress-indicator-$viewId .bar-inner {
   position: absolute;
 }
 
-.linear-progress-indicator-$_viewId .progress {
+.linear-progress-indicator-$viewId .progress {
   /* Animations need to be in LTR. We support RTL by flipping the indicator with scale(-1). */
   direction: ltr;
   inset: 0;
@@ -515,7 +534,7 @@ class _LinearProgressIndicatorBuilder {
   align-items: center;
 }
 
-.linear-progress-indicator-$_viewId .bar {
+.linear-progress-indicator-$viewId .bar {
   animation: none;
   /* position is offset for indeterminate animation, so we lock the inline size here. */
   width: 100%;
@@ -524,24 +543,24 @@ class _LinearProgressIndicatorBuilder {
   transition: transform ${determinateDuration.inMilliseconds}ms $determinateEasing;
 }
 
-.linear-progress-indicator-$_viewId .secondary-bar {
+.linear-progress-indicator-$viewId .secondary-bar {
   display: none;
 }
 
-.linear-progress-indicator-$_viewId .bar-inner {
+.linear-progress-indicator-$viewId .bar-inner {
   inset: 0;
   animation: none;
   background: $rgbColor;
 }
 
-.linear-progress-indicator-$_viewId .inactive-track {
+.linear-progress-indicator-$viewId .inactive-track {
   background: $rgbTrackColor;
   inset: 0;
   transition: transform ${determinateDuration.inMilliseconds}ms $determinateEasing;
   transform-origin: left center;
 }
 
-.linear-progress-indicator-$_viewId .dots {
+.linear-progress-indicator-$viewId .dots {
   inset: 0;
   animation: linear infinite ${determinateDuration.inMilliseconds}ms;
   animation-name: buffering;
@@ -561,43 +580,43 @@ class _LinearProgressIndicatorBuilder {
 
 /* dots are hidden when indeterminate or when there is no visible buffer to
   prevent infinite invisible animation. */
-.linear-progress-indicator-$_viewId .dots[hidden] {
+.linear-progress-indicator-$viewId .dots[hidden] {
   display: none;
 }
 
 /* indeterminate */
-.linear-progress-indicator-$_viewId .indeterminate .bar {
+.linear-progress-indicator-$viewId .indeterminate .bar {
   transition: none;
 }
 
 /* note, the numbers here come directly from the mdc implementation.
    see https://github.com/material-components/material-components-web/blob/main/packages/mdc-linear-progress/_linear-progress.scss#L208. */
-.linear-progress-indicator-$_viewId .indeterminate .primary-bar {
+.linear-progress-indicator-$viewId .indeterminate .primary-bar {
   inset-inline-start: -145.167%;
 }
 
-.linear-progress-indicator-$_viewId .indeterminate .secondary-bar {
+.linear-progress-indicator-$viewId .indeterminate .secondary-bar {
   inset-inline-start: -54.8889%;
   /* this is display none by default. */
   display: block;
 }
 
-.linear-progress-indicator-$_viewId .indeterminate .primary-bar {
+.linear-progress-indicator-$viewId .indeterminate .primary-bar {
   animation: linear infinite ${indeterminateDuration.inMilliseconds}ms;
   animation-name: primary-indeterminate-translate;
 }
 
-.linear-progress-indicator-$_viewId .indeterminate .primary-bar > .bar-inner {
+.linear-progress-indicator-$viewId .indeterminate .primary-bar > .bar-inner {
   animation: linear infinite ${indeterminateDuration.inMilliseconds}ms
     primary-indeterminate-scale;
 }
 
-.linear-progress-indicator-$_viewId .indeterminate .secondary-bar {
+.linear-progress-indicator-$viewId .indeterminate .secondary-bar {
   animation: linear infinite ${indeterminateDuration.inMilliseconds}ms;
   animation-name: secondary-indeterminate-translate;
 }
 
-.linear-progress-indicator-$_viewId .indeterminate .secondary-bar > .bar-inner {
+.linear-progress-indicator-$viewId .indeterminate .secondary-bar > .bar-inner {
   animation: linear infinite ${indeterminateDuration.inMilliseconds}ms
     secondary-indeterminate-scale;
 }

@@ -1,9 +1,17 @@
 import 'package:flutter/widgets.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
-extension _MapExtension on Color {
+extension _ColorMapExtension on Color {
   Map<String, double> toMap() {
     return {'a': a, 'r': r, 'g': g, 'b': b};
+  }
+
+  static Color fromMap(Map<String, double> map) {
+    return Color.from(
+        alpha: map['a'] as double,
+        red: map['r'] as double,
+        green: map['g'] as double,
+        blue: map['b'] as double);
   }
 }
 
@@ -47,6 +55,18 @@ class CircularProgressIndicatorParams {
       'size': size,
     };
   }
+
+  factory CircularProgressIndicatorParams.fromMap(Map<String, dynamic> map) {
+    return CircularProgressIndicatorParams(
+      value: map['value'] as double?,
+      progressColor: _ColorMapExtension.fromMap(
+          (map['progressColor'] as Map).cast<String, double>()),
+      trackColor: _ColorMapExtension.fromMap(
+          (map['trackColor'] as Map).cast<String, double>()),
+      strokeWidth: (map['strokeWidth'] as num).toDouble(),
+      size: (map['size'] as num).toDouble(),
+    );
+  }
 }
 
 class LinearProgressIndicatorParams {
@@ -86,7 +106,34 @@ class LinearProgressIndicatorParams {
       'trackColor': trackColor.toMap(),
       'height': height,
       'value': value,
+      'borderRadius': {
+        'topLeft': borderRadius.topLeft.x,
+        'topRight': borderRadius.topRight.x,
+        'bottomLeft': borderRadius.bottomLeft.x,
+        'bottomRight': borderRadius.bottomRight.x,
+      },
     };
+  }
+
+  factory LinearProgressIndicatorParams.fromMap(Map<String, dynamic> map) {
+    return LinearProgressIndicatorParams(
+      value: map['value'] as double?,
+      progressColor: _ColorMapExtension.fromMap(
+          (map['progressColor'] as Map).cast<String, double>()),
+      trackColor: _ColorMapExtension.fromMap(
+          (map['trackColor'] as Map).cast<String, double>()),
+      height: (map['height'] as num).toDouble(),
+      borderRadius: BorderRadius.only(
+        topLeft:
+            Radius.circular((map['borderRadius']['topLeft'] as num).toDouble()),
+        topRight: Radius.circular(
+            (map['borderRadius']['topRight'] as num).toDouble()),
+        bottomLeft: Radius.circular(
+            (map['borderRadius']['bottomLeft'] as num).toDouble()),
+        bottomRight: Radius.circular(
+            (map['borderRadius']['bottomRight'] as num).toDouble()),
+      ),
+    );
   }
 }
 
