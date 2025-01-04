@@ -8,8 +8,4 @@ This library replaces flutter `CircularProgressIndicator` and `LinearProgressInd
 # Demo:
 
 
-[![](https://github.com/cedvdb/flutter_native_progress_indicator/raw/refs/heads/main/native_indicators_recording.mov)](https://github.com/cedvdb/flutter_native_progress_indicator/raw/refs/heads/main/native_indicators_recording.mov)
-
-
-
 
