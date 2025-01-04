@@ -5,7 +5,6 @@ Flutter progress indicators animation can be blocking and have negative impacts 
 This library replaces flutter `CircularProgressIndicator` and `LinearProgressIndicator` with a platform view implementation.
 
 
-<video src="https://github.com/cedvdb/flutter_native_progress_indicator/raw/refs/heads/main/native_indicators_recording.mov" width="400" />
 
-
+![](https://github.com/cedvdb/flutter_native_progress_indicator/raw/refs/heads/main/native_indicators_recording.mov.mov)
 
