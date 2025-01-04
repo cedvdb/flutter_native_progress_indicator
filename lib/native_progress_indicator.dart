@@ -35,7 +35,6 @@ class _NativeCircularProgressIndicatorState
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    print('did change deps');
     final value = widget.value;
     final progressColor = widget.color ?? Theme.of(context).primaryColor;
     final trackColor = widget.backgroundColor ??
@@ -53,8 +52,14 @@ class _NativeCircularProgressIndicatorState
   @override
   void didUpdateWidget(covariant NativeCircularProgressIndicator oldWidget) {
     final viewId = _viewId;
-    print('did update $viewId');
-    if (viewId != null) {
+    final hasChanged = widget.value != oldWidget.value ||
+        widget.backgroundColor != oldWidget.backgroundColor ||
+        widget.color != oldWidget.color ||
+        widget.semanticsLabel != oldWidget.semanticsLabel ||
+        widget.semanticsValue != oldWidget.semanticsValue ||
+        widget.strokeWidth != oldWidget.strokeWidth;
+
+    if (hasChanged && viewId != null) {
       final value = widget.value;
       final progressColor = widget.color ?? Theme.of(context).primaryColor;
       final trackColor = widget.backgroundColor ??
@@ -150,7 +155,14 @@ class _NativeLinearProgressIndicatorState
   @override
   void didUpdateWidget(covariant NativeLinearProgressIndicator oldWidget) {
     final viewId = _viewId;
-    if (viewId != null) {
+    final hasChanged = widget.value != oldWidget.value ||
+        widget.backgroundColor != oldWidget.backgroundColor ||
+        widget.color != oldWidget.color ||
+        widget.semanticsLabel != oldWidget.semanticsLabel ||
+        widget.semanticsValue != oldWidget.semanticsValue ||
+        widget.minHeight != oldWidget.minHeight ||
+        widget.borderRadius != oldWidget.borderRadius;
+    if (hasChanged && viewId != null) {
       final value = widget.value;
       final progressColor = widget.color ?? Theme.of(context).primaryColor;
       final trackColor = widget.backgroundColor ??

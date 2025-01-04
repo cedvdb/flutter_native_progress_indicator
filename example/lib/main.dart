@@ -63,10 +63,10 @@ class _MyAppState extends State<MyApp> {
                                   .colorScheme
                                   .secondaryContainer,
                             ),
-                            // NativeLinearProgressIndicator(),
-                            // NativeLinearProgressIndicator(
-                            //   value: progress,
-                            // ),
+                            NativeLinearProgressIndicator(),
+                            NativeLinearProgressIndicator(
+                              value: progress,
+                            ),
                           ],
                         ),
                       ),
