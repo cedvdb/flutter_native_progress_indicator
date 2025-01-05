@@ -1,3 +1,7 @@
+## 0.0.4
+
+* hide internals
+
 ## 0.0.3
 
 * upgrade web deps

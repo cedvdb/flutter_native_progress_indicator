@@ -16,3 +16,12 @@ This library replaces flutter `CircularProgressIndicator` and `LinearProgressInd
 Flutter animation can be blocking, which can result in poor performance in some cases. For example when reading large data sets from the firestore cache.
 
 
+# Usage
+
+```
+NativeCircularProgressIndicator() // instead of CircularProgressIndicator()
+
+// or
+
+NativeLinearProgressIndicator() // instead of LinearProgressIndicator()
+```

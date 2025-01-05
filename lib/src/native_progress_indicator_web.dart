@@ -8,7 +8,7 @@ import 'dart:ui_web' as ui_web;
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_web_plugins/flutter_web_plugins.dart';
-import 'package:native_progress_indicator/native_progress_indicator_platform_interface.dart';
+import 'package:native_progress_indicator/src/native_progress_indicator_platform_interface.dart';
 import 'package:web/web.dart' as web;
 
 /// A web implementation of the FlutterNativeSpinnerPlatform of the FlutterNativeSpinner plugin.
