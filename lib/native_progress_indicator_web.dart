@@ -3,6 +3,7 @@
 // package as the core of your plugin.
 // ignore: avoid_web_libraries_in_flutter
 
+import 'dart:js_interop';
 import 'dart:ui_web' as ui_web;
 
 import 'package:flutter/widgets.dart';
@@ -159,7 +160,8 @@ class _CircularProgressIndicatorFactory {
             </div>
           </div>
         </div>
-        ''';
+        '''
+        .toJS;
   }
 
   void _setContentDeterminate({
@@ -182,7 +184,8 @@ class _CircularProgressIndicatorFactory {
             stroke-dashoffset="$dashOffset"></circle>
         </svg>
       </div>
-      ''';
+      '''
+        .toJS;
   }
 
 // styles from https://github.com/material-components/material-web/blob/main/progress/internal/_circular-progress.scss
@@ -454,7 +457,8 @@ class _LinearProgressIndicatorFactory {
           <div class="bar-inner"></div>
         </div>
       </div>
-          ''';
+          '''
+        .toJS;
   }
 
   void _setContentDeterminate({
@@ -477,7 +481,8 @@ class _LinearProgressIndicatorFactory {
         <div class="bar-inner"></div>
       </div>
     </div>
-        ''';
+        '''
+        .toJS;
   }
 
   String _generateCss({

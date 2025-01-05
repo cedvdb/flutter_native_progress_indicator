@@ -1,3 +1,7 @@
+## 0.0.3
+
+* upgrade web deps
+
 ## 0.0.2
 
 * add repository to pubspec
