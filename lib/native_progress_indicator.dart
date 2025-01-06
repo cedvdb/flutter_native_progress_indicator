@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:native_progress_indicator/src/native_progress_indicator_platform_interface.dart';
+import 'package:native_progress_indicator/native_progress_indicator_platform_interface.dart';
 
 export 'src/native_progress_indicator_ios.dart';
 export 'src/native_progress_indicator_android.dart';
+
+export '';
 
 class NativeCircularProgressIndicator extends StatefulWidget {
   final double? value;

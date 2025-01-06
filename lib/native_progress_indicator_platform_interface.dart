@@ -1,6 +1,10 @@
 import 'package:flutter/widgets.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
+export 'src/native_progress_indicator_android.dart';
+export 'src/native_progress_indicator_ios.dart';
+export 'src/native_progress_indicator_web.dart';
+
 extension _ColorMapExtension on Color {
   Map<String, double> toMap() {
     return {'a': a, 'r': r, 'g': g, 'b': b};

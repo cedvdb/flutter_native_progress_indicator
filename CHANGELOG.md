@@ -1,3 +1,7 @@
+## 0.0.5
+
+* fix file not found 
+
 ## 0.0.4
 
 * hide internals

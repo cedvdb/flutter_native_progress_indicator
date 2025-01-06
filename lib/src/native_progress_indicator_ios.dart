@@ -1,6 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:native_progress_indicator/src/native_progress_indicator_platform_interface.dart';
+import 'package:native_progress_indicator/native_progress_indicator_platform_interface.dart';
 
 class NativeProgressIndicatorIos implements NativeProgressIndicatorPlatform {
   final _channel = MethodChannel(

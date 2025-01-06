@@ -1,6 +1,6 @@
 name: native_progress_indicator
 description: "Flutter progress indicators as platform views"
-version: 0.0.4
+version: 0.0.5
 repository: https://github.com/cedvdb/flutter_native_progress_indicator
 
 environment:
@@ -39,12 +39,12 @@ flutter:
         pluginClass: NativeProgressIndicatorPlugin
         dartPluginClass: NativeProgressIndicatorAndroid
         dartClassName: NativeProgressIndicatorAndroid
-        dartFileName: native_progress_indicator_android.dart
+        dartFileName: src/native_progress_indicator_android.dart
       ios:
         pluginClass: NativeProgressIndicatorPlugin
         dartPluginClass: NativeProgressIndicatorIos
         dartClassName: NativeProgressIndicatorIos
-        dartFileName: native_progress_indicator_ios.dart
+        dartFileName: src/native_progress_indicator_ios.dart
       web:
         pluginClass: NativeProgressIndicatorWeb
-        fileName: native_progress_indicator_web.dart
+        fileName: src/native_progress_indicator_web.dart
