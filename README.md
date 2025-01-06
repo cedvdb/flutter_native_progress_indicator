@@ -25,3 +25,13 @@ NativeCircularProgressIndicator() // instead of CircularProgressIndicator()
 
 NativeLinearProgressIndicator() // instead of LinearProgressIndicator()
 ```
+
+On android you may have to change your theme to a material3 compatible theme. For example change `styles.xml` to:
+
+```
+<style name="Theme.MyApp" parent="Theme.Material3.DayNight.NoActionBar">
+    <!-- ... -->
+</style>
+```
+
+You can find detailed information here: https://github.com/material-components/material-components-android/blob/master/docs/getting-started.md#7-material3-theme-inheritance

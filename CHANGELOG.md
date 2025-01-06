@@ -1,3 +1,7 @@
+## 0.0.6
+
+* fix exports
+
 ## 0.0.5
 
 * fix file not found 

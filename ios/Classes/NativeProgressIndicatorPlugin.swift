@@ -61,7 +61,7 @@ public class NativeProgressIndicatorPlugin: NSObject, FlutterPlugin {
             viewIdentifier viewId: Int64,
             arguments args: Any?
         ) -> FlutterPlatformView {
-            var view = CircularProgressNativeView(
+            let view = CircularProgressNativeView(
                 frame: frame,
                 viewIdentifier: viewId,
                 arguments: args,
@@ -95,7 +95,7 @@ public class NativeProgressIndicatorPlugin: NSObject, FlutterPlugin {
             viewIdentifier viewId: Int64,
             arguments args: Any?
         ) -> FlutterPlatformView {
-            var view = LinearProgressNativeView(
+            let view = LinearProgressNativeView(
                 frame: frame,
                 viewIdentifier: viewId,
                 arguments: args,
