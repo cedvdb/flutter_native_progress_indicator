@@ -1,3 +1,8 @@
+## 0.0.7
+
+* fix incorrect color on dark themes
+
+
 ## 0.0.6
 
 * fix exports

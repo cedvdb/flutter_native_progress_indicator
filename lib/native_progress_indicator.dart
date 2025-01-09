@@ -4,8 +4,6 @@ import 'package:native_progress_indicator/native_progress_indicator_platform_int
 export 'src/native_progress_indicator_ios.dart';
 export 'src/native_progress_indicator_android.dart';
 
-export '';
-
 class NativeCircularProgressIndicator extends StatefulWidget {
   final double? value;
   final Color? color;
@@ -38,7 +36,9 @@ class _NativeCircularProgressIndicatorState
   void didChangeDependencies() {
     super.didChangeDependencies();
     final value = widget.value;
-    final progressColor = widget.color ?? Theme.of(context).primaryColor;
+    final progressColor = widget.color ??
+        ProgressIndicatorTheme.of(context).color ??
+        Theme.of(context).colorScheme.primary;
     final trackColor = widget.backgroundColor ??
         ProgressIndicatorTheme.of(context).circularTrackColor ??
         (Colors.transparent);
@@ -63,7 +63,8 @@ class _NativeCircularProgressIndicatorState
 
     if (hasChanged && viewId != null) {
       final value = widget.value;
-      final progressColor = widget.color ?? Theme.of(context).primaryColor;
+      final progressColor =
+          widget.color ?? Theme.of(context).colorScheme.primary;
       final trackColor = widget.backgroundColor ??
           ProgressIndicatorTheme.of(context).circularTrackColor ??
           (Colors.transparent);
