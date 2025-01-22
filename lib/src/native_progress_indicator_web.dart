@@ -201,7 +201,6 @@ class _CircularProgressIndicatorFactory {
         Duration(milliseconds: (1333 * 360 / 306).toInt());
     final cycleDuration = Duration(milliseconds: 1333 * 4);
     final indeterminateEasing = 'cubic-bezier(0.4, 0, 0.2, 1)';
-    print(color.r);
     final rgbColor =
         'rgb(${(color.r * 255).toInt()}, ${(color.g * 255).toInt()}, ${(color.b * 255).toInt()}, ${color.a})';
     final rgbTrackColor =

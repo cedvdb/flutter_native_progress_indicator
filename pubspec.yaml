@@ -1,6 +1,6 @@
 name: native_progress_indicator
 description: "Flutter progress indicators as platform views"
-version: 0.0.7
+version: 0.0.8
 repository: https://github.com/cedvdb/flutter_native_progress_indicator
 
 environment:

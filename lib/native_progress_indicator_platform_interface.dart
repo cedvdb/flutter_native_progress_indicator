@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:native_progress_indicator/src/native_progress_indicator_default.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 extension _ColorMapExtension on Color {
@@ -143,7 +144,8 @@ abstract class NativeProgressIndicatorPlatform extends PlatformInterface {
 
   static final Object _token = Object();
 
-  static late NativeProgressIndicatorPlatform instance;
+  static NativeProgressIndicatorPlatform instance =
+      NativeProgressIndicatorDefault();
 
   Widget buildCircularProgressIndicator({
     required CircularProgressIndicatorParams params,

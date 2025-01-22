@@ -1,7 +1,10 @@
+## 0.0.8
+
+* add default platform interface
+
 ## 0.0.7
 
 * fix incorrect color on dark themes
-
 
 ## 0.0.6
 
